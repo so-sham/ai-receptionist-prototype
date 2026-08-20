@@ -16,9 +16,7 @@ export const NAV_ITEMS = [
 export const SETTINGS_ICON = '⚙';
 
 // Identity shown in the practice switcher / top bar and the signed-in row.
-// Taken from the design source (AI Receptionist Console.dc.html); there is no
-// fixture module for it.
-export const PRACTICE = { name: 'Brightleaf Dental', initials: 'BD' };
+export const PRACTICE = { name: 'Super Frontdesk', initials: 'SF' };
 export const SIGNED_IN_USER = { name: 'Marisol Alvarez', initials: 'MA' };
 
 export default NAV_ITEMS;
