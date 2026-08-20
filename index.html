@@ -953,6 +953,14 @@ const ACTION_GATES = [
   {c:'Note renders without truncation or encoding corruption', g:'100% per adapter', v:'3 of 4 adapters', pass:false, note:'Eaglesoft note field truncates at 512 chars — flags-at-top ordering is why this degrades safely §5.4.2'}
 ];
 
+const CONV_RUBRIC = [
+  {d:'Naturalness', fail:'Robotic pacing, awkward gaps, over-formal phrasing', score:4.4},
+  {d:'Efficiency', fail:'Turns taken vs turns needed', score:4.1},
+  {d:'Recovery', fail:'How gracefully it handled a misunderstanding', score:3.6},
+  {d:'Clarity of commitment', fail:'Did the caller leave knowing what happens next — specifically in approval mode, did they understand it was not confirmed', score:4.4},
+  {d:'Appropriateness', fail:'Never gave clinical advice, never quoted a price, never overstepped', score:4.5}
+];
+
 const CONFUSION = [
   {a:'vendor', b:'new patient', n:9, why:'Inflates the conversion denominator'},
   {a:'insurance rep', b:'patient insurance query', n:14, why:'Sounds like a patient. Not an opportunity.'},
@@ -1706,8 +1714,27 @@ function renderEval(){
       <tr><td><b>Transcription</b></td><td>Did we hear it correctly?</td><td class="dim">WER against human transcript</td><td class="num">4.8% WER</td></tr>
       <tr><td><b>Extraction</b></td><td>Did we understand it correctly?</td><td class="dim">Per-field accuracy vs hand labels</td><td class="num">see below</td></tr>
       <tr><td><b>Action</b></td><td>Did we do the right thing?</td><td class="dim">Outcome audit vs adjudicated ground truth</td><td class="num">11 of 12 checks</td></tr>
-      <tr><td><b>Conversation</b></td><td>Did it feel acceptable to the caller?</td><td class="dim">Human rubric + caller outcome</td><td class="num">4.2 / 5</td></tr>
+      <tr><td><b>Conversation</b></td><td>Did it feel acceptable to the caller?</td><td class="dim">Human rubric + caller outcome</td><td class="num">4.2 / 5 <span class="dim">see below</span></td></tr>
     </tbody></table>
+  </div>
+
+  <div class="card">
+    <h3>Conversation quality rubric <span class="ref">§7.1.9</span></h3>
+    <p class="hint">Rubric-scored by humans on a weekly sample of 50 calls, 1–5 per dimension. This is the only evaluation layer with no representation elsewhere on this page — the row above just rolls it up to one number.</p>
+    ${CONV_RUBRIC.map(r=>{
+      const w = (r.score-1)/4*100;
+      return `<div style="margin-bottom:12px">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:3px">
+          <span style="font-size:12.5px;font-weight:600">${esc(r.d)}</span>
+          <span class="n" style="text-align:right;font-variant-numeric:tabular-nums;color:var(--ink-2)">${r.score.toFixed(1)} / 5</span>
+        </div>
+        <div class="hbar-track" style="height:8px;margin-bottom:4px"><div class="hbar-fill" style="width:${w}%;background:${r.score<4?'var(--warning)':'var(--series-1)'}"></div></div>
+        <div class="dim" style="font-size:11.5px">Failing looks like: ${esc(r.fail)}</div>
+      </div>`;
+    }).join('')}
+    <div class="callout warn" style="margin-bottom:8px"><b>Recovery is the weakest dimension (3.6/5).</b> It tracks directly to <span class="ref">§5.7</span>'s two-strikes rule — the agent stops trying after a second misunderstanding rather than smoothing it over, and testers feel that as abruptness. Naturalness, efficiency and appropriateness are all pulling the rollup up; recovery is what would need work before this ships.</div>
+    <div class="callout" style="margin-bottom:8px"><b>Inter-rater agreement on the rubric is itself a metric.</b> If two humans score the same call 2 and 5, the rubric is broken, not the agent — target κ ≥0.7. See <b>Ground truth &amp; calibration</b> below for the current figure; above threshold, so these scores are trusted rather than reported with a caveat.</div>
+    <div class="callout" style="margin-bottom:0"><b>An LLM judge is acceptable here, but only after it is validated against human scores on a held-out sample</b> — and only with the human-vs-judge correlation reported alongside every number it produces. No judge is in the loop for the scores above; they are human-rated.</div>
   </div>
 
   <div class="card">
