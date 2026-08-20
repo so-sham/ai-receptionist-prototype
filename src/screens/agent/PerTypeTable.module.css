@@ -1,0 +1,64 @@
+.section {
+  margin-bottom: var(--s-40);
+}
+
+.shell {
+  margin-top: var(--s-12);
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr 252px 120px;
+  align-items: center;
+  gap: var(--s-16);
+  height: 52px;
+  padding: 0 var(--s-24);
+  border-bottom: 1px solid var(--line);
+}
+
+.pills {
+  display: flex;
+  gap: 4px;
+}
+
+.pill {
+  height: 28px;
+  padding: 0 10px;
+  border-radius: var(--r-999);
+  border: 1px solid var(--line-strong);
+  background: var(--surface);
+  color: var(--ink-muted);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  white-space: nowrap;
+  transition:
+    background var(--dur-state) var(--ease),
+    border-color var(--dur-state) var(--ease),
+    color var(--dur-state) var(--ease);
+}
+
+.pillSelected {
+  border-color: var(--accent);
+  background: var(--accent-wash);
+  color: var(--accent);
+}
+
+.pillDimmed {
+  color: var(--ink-faint);
+}
+
+.lock {
+  text-align: right;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.footer {
+  padding: 14px var(--s-24);
+  color: var(--ink-muted);
+  font-size: 13px;
+  line-height: 20px;
+}

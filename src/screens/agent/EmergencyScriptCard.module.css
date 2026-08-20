@@ -1,0 +1,20 @@
+.title {
+  margin: 0 0 4px;
+}
+
+.copy {
+  color: var(--ink-muted);
+  margin: 0 0 var(--s-16);
+}
+
+.script {
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-6);
+  padding: 12px 14px;
+  text-wrap: pretty;
+}
+
+.edit {
+  margin-top: 14px;
+  display: inline-block;
+}

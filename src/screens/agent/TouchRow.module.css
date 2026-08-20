@@ -1,0 +1,43 @@
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-16);
+}
+
+.label {
+  color: var(--ink-muted);
+}
+
+.value {
+  flex: none;
+  height: 36px;
+  padding: 0 var(--s-12);
+  border-radius: var(--r-6);
+  border: 1px solid var(--line-strong);
+  background: var(--surface);
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  gap: var(--s-8);
+  white-space: nowrap;
+  transition: background var(--dur-state) var(--ease);
+}
+
+.value:hover {
+  background: var(--surface-sunk);
+}
+
+.locked {
+  background: var(--surface-sunk);
+  color: var(--ink-muted);
+}
+
+.locked:hover {
+  background: var(--surface-sunk);
+}
+
+.chevron {
+  color: var(--ink-faint);
+  font-size: 9px;
+}

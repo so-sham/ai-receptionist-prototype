@@ -1,0 +1,14 @@
+.title {
+  margin: 0 0 4px;
+}
+
+.copy {
+  color: var(--ink-muted);
+  margin: 0 0 var(--s-16);
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-8);
+}

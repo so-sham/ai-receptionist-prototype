@@ -1,0 +1,16 @@
+.subtitle {
+  color: var(--ink-muted);
+  margin: 0 0 var(--s-24);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--s-24);
+}
+
+@media (max-width: 900px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}

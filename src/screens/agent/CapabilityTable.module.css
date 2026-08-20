@@ -1,0 +1,85 @@
+.section {
+  margin-bottom: var(--s-40);
+}
+
+.shell {
+  margin-top: var(--s-12);
+}
+
+.header {
+  display: grid;
+  grid-template-columns: 1fr 150px 150px 150px;
+  align-items: end;
+  gap: var(--s-12);
+  padding: 10px var(--s-24);
+  background: var(--surface-sunk);
+  border-bottom: 1px solid var(--line);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+}
+
+.center {
+  text-align: center;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr 150px 150px 150px;
+  align-items: center;
+  gap: var(--s-12);
+  height: 52px;
+  padding: 0 var(--s-24);
+  border-bottom: 1px solid var(--line);
+}
+
+.supportBtn {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  border: none;
+  background: none;
+  padding: 6px 0;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  border-radius: var(--r-6);
+  transition: background var(--dur-state) var(--ease);
+}
+
+.supportBtn:hover {
+  background: var(--surface-sunk);
+}
+
+.supported {
+  color: var(--accent);
+}
+
+.unsupported {
+  color: var(--ink-faint);
+}
+
+.toggleCell {
+  display: flex;
+  justify-content: center;
+}
+
+.toneSettled {
+  color: var(--accent);
+}
+
+.tonePending {
+  color: var(--pending);
+}
+
+.toneFaint {
+  color: var(--ink-faint);
+}
+
+.footer {
+  padding: 14px var(--s-24);
+  color: var(--ink-muted);
+  font-size: 13px;
+  line-height: 20px;
+}

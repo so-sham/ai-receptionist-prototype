@@ -1,0 +1,96 @@
+.section {
+  margin-bottom: var(--s-40);
+}
+
+.row {
+  margin-top: var(--s-12);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--s-16);
+}
+
+@media (max-width: 900px) {
+  .row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-12);
+  text-align: left;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r-10);
+  /* Border grows 1px -> 2px on selection; padding shrinks to match, so
+     border + padding always sums to 24px and content never shifts. */
+  padding: 23px;
+  transition: border-color var(--dur-state) var(--ease);
+}
+
+.card:hover {
+  border-color: var(--line-strong);
+}
+
+.selected {
+  border: 2px solid var(--accent);
+  padding: 22px;
+}
+
+.titleRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.dot {
+  flex: none;
+  margin-top: 3px;
+  width: 16px;
+  height: 16px;
+  border-radius: var(--r-999);
+  border: 1px solid var(--line-strong);
+  background: var(--surface);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.selected .dot {
+  border-color: var(--accent);
+}
+
+.dotInner {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--r-999);
+  background: transparent;
+}
+
+.selected .dotInner {
+  background: var(--accent);
+}
+
+.title {
+  margin: 0;
+}
+
+.consequence {
+  color: var(--ink-muted);
+}
+
+.hears {
+  margin-top: auto;
+  padding-top: var(--s-12);
+  border-top: 1px solid var(--line);
+}
+
+.hearsLabel {
+  color: var(--ink-faint);
+  margin-bottom: 6px;
+}
+
+.hearsText {
+  color: var(--ink);
+}
