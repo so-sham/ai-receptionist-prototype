@@ -1,0 +1,121 @@
+.trendCard {
+  margin-bottom: var(--s-24);
+}
+
+.cardHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s-16);
+  margin-bottom: 20px;
+}
+
+.cardHead h2 {
+  margin: 0;
+}
+
+.muted {
+  color: var(--ink-muted);
+}
+
+.faint {
+  color: var(--ink-faint);
+}
+
+.negative {
+  color: var(--attention);
+}
+
+.right {
+  text-align: right;
+}
+
+/* The design's tables use a 24px gutter; the primitive defaults to 16px. */
+.gutter.gutter {
+  padding-left: var(--s-24);
+  padding-right: var(--s-24);
+}
+
+/* ---- run list ---- */
+
+.box {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  border: 1px solid var(--line-strong);
+  background: var(--surface);
+  color: var(--surface);
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    background var(--dur-state) var(--ease),
+    border-color var(--dur-state) var(--ease);
+}
+
+.boxOn {
+  border-color: var(--accent);
+  background: var(--accent);
+}
+
+.compareBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-16);
+  padding: var(--s-16) var(--s-24);
+}
+
+/* ---- modification taxonomy ---- */
+
+.taxonomyCard {
+  margin-top: var(--s-24);
+}
+
+.taxonomyTitle {
+  margin: 0 0 var(--s-4);
+}
+
+.taxonomySub {
+  color: var(--ink-muted);
+  margin-bottom: 20px;
+}
+
+.bars {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-12);
+}
+
+.barRow {
+  display: grid;
+  grid-template-columns: 180px 1fr 56px;
+  align-items: center;
+  gap: var(--s-16);
+}
+
+.track {
+  height: 10px;
+  border-radius: var(--r-999);
+  background: var(--surface-sunk);
+  overflow: hidden;
+}
+
+.fill {
+  height: 10px;
+  border-radius: var(--r-999);
+}
+
+.reading {
+  margin: 20px 0 0;
+  max-width: 74ch;
+  text-wrap: pretty;
+}
+
+@media (max-width: 900px) {
+  .barRow {
+    grid-template-columns: 120px 1fr 40px;
+    gap: var(--s-12);
+  }
+}

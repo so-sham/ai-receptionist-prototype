@@ -1,0 +1,48 @@
+.head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: var(--s-16);
+}
+
+.glyph {
+  flex: none;
+  width: 16px;
+  height: 16px;
+  border-radius: var(--r-999);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  background: var(--attention-wash);
+  color: var(--attention);
+}
+
+.rows {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: var(--s-16);
+}
+
+.row {
+  display: flex;
+  gap: var(--s-12);
+  align-items: baseline;
+}
+
+.label {
+  flex: none;
+  width: 150px;
+  color: var(--ink-muted);
+}
+
+.why {
+  margin: 0;
+  max-width: 68ch;
+  text-wrap: pretty;
+}
+
+.listen {
+  margin-top: 20px;
+}

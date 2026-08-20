@@ -1,0 +1,81 @@
+.summary {
+  color: var(--ink-muted);
+  margin-top: 2px;
+}
+
+.worseTitle {
+  color: var(--attention);
+  margin-bottom: var(--s-12);
+}
+
+.betterTitle {
+  color: var(--accent);
+  margin-bottom: var(--s-12);
+}
+
+.group {
+  border: 1px solid var(--line);
+  border-radius: var(--r-10);
+  overflow: hidden;
+  margin-bottom: var(--s-32);
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: var(--s-12);
+  padding: 14px var(--s-16);
+  border-bottom: 1px solid var(--line);
+}
+
+.item:last-child {
+  border-bottom: none;
+}
+
+.itemWorse {
+  background: var(--attention-wash);
+}
+
+.itemLabel {
+  flex: 1;
+  min-width: 0;
+}
+
+.worseGlyph {
+  color: var(--attention);
+}
+
+.betterGlyph {
+  color: var(--accent);
+}
+
+.worseDelta {
+  color: var(--attention);
+  white-space: nowrap;
+}
+
+.mutedDelta {
+  color: var(--ink-muted);
+  white-space: nowrap;
+}
+
+.checkRow {
+  display: grid;
+  grid-template-columns: 1fr 70px 70px 60px;
+  align-items: center;
+  gap: 10px;
+  height: 44px;
+  border-bottom: 1px solid var(--line);
+}
+
+.right {
+  text-align: right;
+}
+
+.muted {
+  color: var(--ink-muted);
+}
+
+.attention {
+  color: var(--attention);
+}

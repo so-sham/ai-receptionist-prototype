@@ -1,0 +1,44 @@
+.metricStrip {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--s-24);
+  margin-bottom: var(--s-24);
+}
+
+.right {
+  text-align: right;
+}
+
+.muted {
+  color: var(--ink-muted);
+}
+
+/* 24px gutter from the design, over the primitive's 16px default. */
+.gutter.gutter,
+.signalRow.signalRow {
+  padding-left: var(--s-24);
+  padding-right: var(--s-24);
+}
+
+.signalRow.signalRow {
+  padding-top: var(--s-12);
+  padding-bottom: var(--s-12);
+}
+
+.footer {
+  padding: 14px var(--s-24);
+  color: var(--ink-muted);
+  max-width: 78ch;
+}
+
+@media (max-width: 1240px) {
+  .metricStrip {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 900px) {
+  .metricStrip {
+    grid-template-columns: 1fr;
+  }
+}

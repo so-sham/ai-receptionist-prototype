@@ -1,0 +1,177 @@
+/* ---- the one card: idle and running ---- */
+
+.card {
+  max-width: 520px;
+  margin: var(--s-40) auto 0;
+  padding: var(--s-48) var(--s-40);
+}
+
+.cardCentred {
+  text-align: center;
+}
+
+.idleTitle {
+  margin: 0 0 var(--s-12);
+}
+
+.idleBody {
+  max-width: 40ch;
+  margin: 0 auto var(--s-32);
+  color: var(--ink-muted);
+  text-wrap: pretty;
+}
+
+.lastRun {
+  margin-top: var(--s-24);
+  color: var(--ink-muted);
+}
+
+.runningTitle {
+  margin-bottom: 20px;
+}
+
+.runningCase {
+  margin-top: 20px;
+  color: var(--ink-muted);
+}
+
+.cancel {
+  margin-top: 28px;
+}
+
+/* ---- result: verdict ---- */
+
+.verdict {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-24);
+  margin-bottom: var(--s-24);
+}
+
+.verdictMeta {
+  display: flex;
+  align-items: center;
+  gap: var(--s-12);
+  margin-top: var(--s-12);
+  flex-wrap: wrap;
+}
+
+.verdictNote {
+  color: var(--ink-muted);
+}
+
+.verdictRight {
+  text-align: right;
+  flex: none;
+}
+
+.noteButton {
+  margin-top: 10px;
+}
+
+.positive {
+  color: var(--accent);
+}
+
+.negative {
+  color: var(--attention);
+}
+
+.muted {
+  color: var(--ink-muted);
+}
+
+/* ---- result: per-check table ---- */
+
+.checkTable {
+  margin-bottom: var(--s-24);
+}
+
+/* The quality tables use the 24px gutter from the design rather than the
+   primitive's default 16px. Doubling the class raises specificity above
+   DataTable.module.css without reaching for !important. */
+.tableRow.tableRow,
+.checkRow.checkRow {
+  padding-left: var(--s-24);
+  padding-right: var(--s-24);
+}
+
+.checkRow.checkRow {
+  padding-top: var(--s-12);
+  padding-bottom: var(--s-12);
+}
+
+.right {
+  text-align: right;
+}
+
+.field {
+  margin-top: 2px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  line-height: 16px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.fieldStrong {
+  composes: field;
+  color: var(--ink-muted);
+}
+
+/* ---- result: the emergency row ---- */
+
+.emergency {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-16);
+  padding: var(--s-16) var(--s-24);
+  border-bottom: 1px solid var(--line);
+}
+
+.emergencyPass {
+  background: var(--accent-wash);
+}
+
+.emergencyFail {
+  background: var(--attention-wash);
+}
+
+.emergencyRight {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex: none;
+}
+
+/* On the wash, the pill needs the white ground to stay legible. */
+.mustPass {
+  background: var(--surface);
+}
+
+/* ---- result: failures ---- */
+
+.sectionLabel {
+  margin-bottom: var(--s-12);
+  color: var(--ink-muted);
+}
+
+.failures {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-16);
+}
+
+@media (max-width: 900px) {
+  .verdict {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .verdictRight {
+    text-align: left;
+  }
+}
