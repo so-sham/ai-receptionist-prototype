@@ -159,10 +159,47 @@ not a boolean, and `effectiveMode` needs a branch.
 
 - Any real ASR/TTS/LLM/telephony. Latency numbers are the §5.1 budget table played back.
 - Free-text caller input. Scenarios are scripted; a rules-engine chat mode was scoped out.
-- Persistence. Reloading the page resets every queue. Queues are in-memory arrays on `STATE`.
+- Persistence, with one deliberate exception — see "Eval runner" below. Reloading the
+  page resets every queue. Queues are in-memory arrays on `STATE`.
 - Family-member booking within one call (P1), Spanish (P1), rescheduling flows.
 - The `is_opportunity` classifier, obviously — its outputs are hardcoded per scenario, and
   the confidence numbers are chosen to make the review-threshold behaviour legible.
+
+## Eval runner
+
+The "Evaluation & gates" view opens with a real, runnable check — not another static
+table like the rest of that page. It plays all 8 `SCENARIOS` against a hand-written
+answer key (`EVAL_LABELS`) and scores five plain-language questions (`EVAL_QUESTIONS`),
+plus the two rules that never bend (zero double-bookings, zero silent overwrites),
+checked separately from the target percentages and never traded against a passing
+score. This is `§6` of the eval-runner spec a stakeholder handed over on top of the
+original PRD — build it once, and let the page argue with `scripts/check.js`'s
+"engineer-only, no history" version by existing next to it.
+
+`evalPredicted(id)` supplies the "what the AI got" side. It reuses `scn.record`'s
+existing `is_opportunity` / `intent` / `treatment_category` — the same values already
+shown elsewhere as the AI's output — rather than inventing a second parallel dataset,
+**except** for two deliberate misses in `EVAL_MISPREDICTIONS`, so the runner has real
+failures to show instead of a permanent 8/8. Both are chosen, not arbitrary: `blackout`'s
+intent is the scenario's own lowest-confidence field (`conf.intent 0.79`, already flagged
+in-app as "new_patient vs existing_booking ambiguous"), and `collision`'s treatment flips
+to the exact confusion pair `CONFUSION` already reports as "the boundary the model will
+never fully get." Change either scenario's `record` and the mismatch may stop being
+realistic — check `EVAL_MISPREDICTIONS` against it.
+
+The two absolute-rule checks (`runEvalNow()`) don't re-derive from the target table —
+they assert against the literal turn text of the `collision` scenario (idempotency key
+reused, "committed once," "fails rather than overwriting," the confirmed slot differing
+from the collided one). This runs over `SCENARIOS` data only; it does not drive the live
+call simulator, so running the check never touches the transcript, approval queue, or
+dashboard someone might currently be looking at.
+
+**Persistence — the one exception to "reloading resets everything."** Run history
+(`loadEvalHistory`/`saveEvalHistory`) is the entire point of the feature — "is it getting
+better or worse" is meaningless if every run forgets the last one — so it's the one thing
+in this file that survives a reload, via `localStorage['ai_receptionist_eval_history']`.
+Nothing else in the app does this; don't extend the pattern elsewhere without a similarly
+clear reason.
 
 ## Style conventions
 

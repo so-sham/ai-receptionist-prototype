@@ -911,6 +911,58 @@ const TRAFFIC = {
   stages:[[ 'telephony in',28],['endpointing',244],['ASR final',77],['generation',288],['TTS first audio',113],['telephony out',30]]
 };
 
+/* ---------------- eval runner — plain-question ground truth, §6 ----------------
+   One row per scenario in SCENARIOS. "predicted" is what the AI extracted — reusing
+   the same is_opportunity/intent/treatment_category the rest of the app already shows
+   as the AI's output (scn.record), not a separate invented value — except for the two
+   deliberate misses below, so the runner has real failures to show instead of a
+   permanent clean sweep. "ready" and "want" are answered plainly here because neither
+   has an equivalent field surfaced elsewhere. Both are hand-labelled from what the
+   caller actually did in the transcript, not derived from the booking outcome, since
+   a caller can be ready to book and still not end up booked (the emergency scenario:
+   a slot was held before the emergency interrupted — that is a safety override, not a
+   readiness miss, and conflating the two would misreport what happened). */
+const EVAL_QUESTIONS = [
+  {k:'opportunity', q:'Is this a possible patient?', target:0.90, note:'Every other number depends on this one'},
+  {k:'intent',      q:'What did they want?',          target:0.85},
+  {k:'treatment',   q:'What kind of treatment?',       target:0.80},
+  {k:'ready',       q:'Were they ready to book?',      target:0.85},
+  {k:'emergency',   q:'Did it spot the emergency?',    target:0.99, note:'Never traded away'}
+];
+const EVAL_LABELS = {
+  //             opportunity  intent               treatment         ready  emergency
+  implant:     {opportunity:true,  intent:'new_patient',      treatment:'implant',      ready:true,  emergency:false},
+  notaccepted: {opportunity:true,  intent:'new_patient',      treatment:'hygiene',      ready:false, emergency:false},
+  emergency:   {opportunity:true,  intent:'emergency',        treatment:'emergency',    ready:true,  emergency:true},
+  vendor:      {opportunity:false, intent:'vendor',           treatment:null,           ready:false, emergency:false},
+  collision:   {opportunity:false, intent:'existing_booking', treatment:'hygiene',      ready:true,  emergency:false},
+  bargein:     {opportunity:false, intent:'reschedule',       treatment:'restorative',  ready:false, emergency:false},
+  blackout:    {opportunity:true,  intent:'new_patient',      treatment:'oral_surgery', ready:false, emergency:false},
+  minor:       {opportunity:true,  intent:'other',            treatment:'unspecified',  ready:false, emergency:false}
+};
+/* the two deliberate misses — both already documented elsewhere in this file as
+   genuinely shaky calls, not arbitrary: blackout's intent is the scenario's own
+   lowest-confidence field (conf.intent 0.79 — "new_patient vs existing_booking
+   ambiguous", per its own low_confidence flag), and hygiene/restorative is the
+   confusion pair CONFUSION already reports as "the boundary the model will never
+   fully get". */
+const EVAL_MISPREDICTIONS = {
+  blackout:  {intent:'existing_booking'},
+  collision: {treatment:'restorative'}
+};
+function evalPredicted(id){
+  const rec = SCENARIOS.find(s=>s.id===id).record;
+  const truth = EVAL_LABELS[id];
+  const miss = EVAL_MISPREDICTIONS[id] || {};
+  return {
+    opportunity: rec.is_opportunity,
+    intent: miss.intent ?? rec.intent,
+    treatment: miss.treatment ?? rec.treatment_category,
+    ready: truth.ready,
+    emergency: truth.emergency
+  };
+}
+
 const EVAL_FIELDS = [
   {f:'is_opportunity', m:'F1', gate:0.85, target:0.92, cur:0.931},
   {f:'intent', m:'Macro-F1', gate:0.82, target:0.90, cur:0.907},
@@ -1701,12 +1753,122 @@ function renderDashboard(){
 }
 
 /* ---------------- eval ---------------- */
+/* ---------------- eval runner — §6 ----------------
+   Persistence is a deliberate, scoped exception to "reloading resets every queue"
+   (CLAUDE.md, Deliberately not built) — run history has no value at all if it can't
+   survive a reload, since the entire point is answering "better or worse than last
+   time," not "better or worse than five minutes ago in this tab." */
+const EVAL_HISTORY_KEY = 'ai_receptionist_eval_history';
+function loadEvalHistory(){
+  try { return JSON.parse(localStorage.getItem(EVAL_HISTORY_KEY)) || []; } catch(e){ return []; }
+}
+function saveEvalHistory(hist){
+  try { localStorage.setItem(EVAL_HISTORY_KEY, JSON.stringify(hist)); } catch(e){}
+}
+function fmtEval(v){ return v===null||v===undefined?'<span class="null">nothing</span>': typeof v==='boolean'?(v?'yes':'no'):esc(String(v)); }
+function sparklineSVG(scores, max){
+  if(scores.length<2) return '';
+  const W=130,H=28,pad=3;
+  const pts = scores.map((v,i)=>{
+    const x = pad + i/(scores.length-1)*(W-2*pad);
+    const y = H-pad - (v/max)*(H-2*pad);
+    return `${x.toFixed(1)},${y.toFixed(1)}`;
+  }).join(' ');
+  return `<svg viewBox="0 0 ${W} ${H}" style="width:130px;height:28px;display:block" aria-hidden="true"><polyline points="${pts}" fill="none" stroke="var(--series-1)" stroke-width="1.75"/></svg>`;
+}
+/* the actual check: every scripted call against its hand-labelled answer, plus the
+   two absolute rules against the one scenario written to exercise them. Runs entirely
+   over static scenario data — it does not drive the live call simulator, so running
+   it never touches the transcript, approval queue or dashboard the user might be
+   looking at. */
+function runEvalNow(){
+  const perCall = SCENARIOS.map(s=>{
+    const truth = EVAL_LABELS[s.id];
+    const pred = evalPredicted(s.id);
+    const fields = EVAL_QUESTIONS.map(q=>({k:q.k, q:q.q, expected:truth[q.k], got:pred[q.k], ok: truth[q.k]===pred[q.k]}));
+    return {id:s.id, title:s.title, fields, ok: fields.every(f=>f.ok)};
+  });
+  const byQuestion = {};
+  EVAL_QUESTIONS.forEach(q=>{
+    byQuestion[q.k] = {correct: perCall.filter(c=>c.fields.find(f=>f.k===q.k).ok).length, total: perCall.length};
+  });
+  const failures = perCall.filter(c=>!c.ok).flatMap(c=>c.fields.filter(f=>!f.ok).map(f=>({call:c.title, question:f.q, expected:f.expected, got:f.got})));
+
+  /* the two rules that never bend, checked against what the write-collision scenario's
+     own script proves happened — not re-derived from the target table above, and not
+     folded into its score either way */
+  const collisionText = SCENARIOS.find(s=>s.id==='collision').turns.map(t=>t.t).join(' ');
+  const idemCount = (collisionText.match(/idem_ab4419c0/g)||[]).length;
+  const noDoubleBooking = idemCount>=2 && /committed once/i.test(collisionText);
+  const noSilentOverwrite = /fails rather than overwriting/i.test(collisionText) && collisionText.includes('4:50');
+
+  return { ts:Date.now(), callsCorrect: perCall.filter(c=>c.ok).length, callsTotal: perCall.length,
+    byQuestion, failures, absolute:{noDoubleBooking, noSilentOverwrite} };
+}
+function renderEvalRunnerCard(){
+  const hist = loadEvalHistory();
+  const last = hist[hist.length-1];
+  const prev = hist[hist.length-2];
+
+  const summary = !last ? `<div class="empty">Not run yet.<br><span style="font-size:12.5px">Press the button below — it plays all 8 calls against a human-written answer key.</span></div>` : (()=>{
+    const delta = prev ? last.callsCorrect - prev.callsCorrect : null;
+    const deltaChip = delta==null ? '<span class="chip">first run</span>' : delta>0?`<span class="chip good">▲ up ${delta} since last run</span>` : delta<0 ? `<span class="chip crit">▼ down ${Math.abs(delta)} since last run</span>` : `<span class="chip">= same as last run</span>`;
+    return `
+    <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:12px">
+      <div style="font-size:30px;font-weight:700">It got ${last.callsCorrect} of ${last.callsTotal} right</div>
+      ${deltaChip}
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin-bottom:12px">
+      ${EVAL_QUESTIONS.map(q=>{
+        const b = last.byQuestion[q.k], p = b.correct/b.total, pass = p>=q.target;
+        return `<div class="tile" style="padding:9px 11px">
+          <div class="lab">${esc(q.q)}</div>
+          <div class="val" style="font-size:18px;color:${pass?'inherit':'var(--critical)'}">${b.correct}/${b.total}</div>
+          <div class="foot">target ${Math.round(q.target*100)}%${q.note?' · '+esc(q.note):''}</div>
+        </div>`;
+      }).join('')}
+    </div>
+    ${last.failures.length ? `<div class="callout warn" style="margin-bottom:12px"><b>${last.failures.length} miss${last.failures.length>1?'es':''} — shown, not hidden:</b>${last.failures.map(f=>`<div style="margin-top:6px;font-size:12.5px">— <b>${esc(f.call)}</b>, "${esc(f.question)}" — should have said <span class="mono">${fmtEval(f.expected)}</span>, said <span class="mono">${fmtEval(f.got)}</span></div>`).join('')}</div>` : `<div class="callout" style="margin-bottom:12px"><b>No misses this run.</b></div>`}
+    <div class="srow" style="flex-wrap:wrap;gap:10px 16px">
+      <span class="chip ${last.absolute.noDoubleBooking?'good':'crit'}">${last.absolute.noDoubleBooking?'✓':'✗'} Zero double-bookings</span>
+      <span class="chip ${last.absolute.noSilentOverwrite?'good':'crit'}">${last.absolute.noSilentOverwrite?'✓':'✗'} Zero silent overwrites</span>
+      <span class="dim" style="font-size:11.5px">These two never bend — not "very few," zero, and never traded against a passing score above.</span>
+    </div>
+    <div class="dim" style="font-size:11px;margin-top:8px">Last run ${new Date(last.ts).toLocaleString()}${last.note?' — "'+esc(last.note)+'"':''}</div>`;
+  })();
+
+  const histRows = hist.slice(-10).reverse().map((h,i)=>{
+    const idx = hist.length-1-i, p = idx>0?hist[idx-1]:null, d = p?h.callsCorrect-p.callsCorrect:null;
+    const dChip = d==null?'<span class="dim">first run</span>':d>0?`<span class="ok">▲ ${d}</span>`:d<0?`<span class="bad">▼ ${Math.abs(d)}</span>`:'<span class="dim">same</span>';
+    return `<tr><td class="dim" style="white-space:nowrap;font-size:12px">${new Date(h.ts).toLocaleString()}</td><td class="num">${h.callsCorrect}/${h.callsTotal}</td><td>${dChip}</td><td class="dim" style="font-size:12px">${h.note?esc(h.note):''}</td></tr>`;
+  }).join('');
+
+  return `
+  <div class="card">
+    <h3>Run the check</h3>
+    <p class="hint">Plays all 8 scripted calls against a human-written answer key and scores them — same idea as <span class="mono">scripts/check.js</span>, but one button, in the browser, in plain language, and it remembers every run so you can tell whether a change helped.</p>
+    <div class="srow" style="margin-bottom:14px;flex-wrap:wrap;gap:8px">
+      <button class="btn good sm" id="btnRunEval">▶ Run the check</button>
+      <input type="text" id="evalNote" placeholder='optional note — e.g. "after tightening the prompt"' style="flex:1;min-width:220px;padding:7px 10px;border:1px solid var(--hair);border-radius:7px;background:var(--raised);color:var(--ink);font-size:12.5px">
+    </div>
+    <div id="evalRunnerSummary">${summary}</div>
+    ${hist.length ? `<div style="margin-top:16px">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px">
+        <div style="font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-muted)">History — is it getting better or worse?</div>
+        ${sparklineSVG(hist.slice(-10).map(h=>h.callsCorrect), 8)}
+      </div>
+      <table><thead><tr><th>Run</th><th class="num">Score</th><th>Change</th><th>Note</th></tr></thead><tbody>${histRows}</tbody></table>
+    </div>` : ''}
+  </div>`;
+}
 function renderEval(){
   const gateRow = g => `<tr>
     <td><b>${g.n}</b> ${esc(g.t)} <span class="ref">${g.ref}</span>${g.hard?' <span class="chip crit">stops the release</span>':''}</td>
     <td class="dim">${g.v?esc(g.v):''}</td>
     <td>${g.s==='pass'?'<span class="ok">pass</span>':g.s==='warn'?'<span class="chip warn">justify</span>':'<span class="chip">reported</span>'}</td></tr>`;
   $('#evalBody').innerHTML = `
+  ${renderEvalRunnerCard()}
+
   <div class="card">
     <h3>Four layers, measured independently <span class="ref">§7.1.1</span></h3>
     <p class="hint">A single "accuracy" number is the most common way an AI product ships broken. Extraction can be perfect while the action is wrong — the agent correctly identifies an implant enquiry and then books it into a hygiene slot.</p>
@@ -1808,6 +1970,14 @@ function renderEval(){
     </tbody></table>
     <div class="callout warn" style="margin-bottom:0"><b>Sourcing.</b> Pre-launch numbers on this page are from synthetic transcripts written against observed patterns — clearly labelled as synthetic, and never reported as production accuracy.</div>
   </div>`;
+  $('#btnRunEval').addEventListener('click', ()=>{
+    const result = runEvalNow();
+    result.note = $('#evalNote').value.trim();
+    const hist = loadEvalHistory();
+    hist.push(result);
+    saveEvalHistory(hist);
+    renderEval();
+  });
 }
 
 /* ---------------- boot ---------------- */

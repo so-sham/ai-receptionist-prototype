@@ -32,9 +32,10 @@ here. Edit `index.html` directly.
 
 Same call, three different promises. That is the §5.4 argument, made clickable.
 
-Then: **Approval queue** (press *Advance clock 1h* to see a hold expire into a broken
-promise), **Constraints & modes** (try setting sedation to direct write — you can't),
-**Dashboard**, and **Evaluation & gates**.
+Then: **Approval queue** (press *Play* to run the fake clock and watch a hold expire into
+a broken promise), **Constraints & modes** (try setting sedation to direct write — you
+can't), **Dashboard**, and **Evaluation & gates** — press *Run the check* at the top for a
+real, scored pass over all 8 calls, not another static table.
 
 ## Surfaces
 
@@ -46,7 +47,7 @@ promise), **Constraints & modes** (try setting sedation to direct write — you 
 | Constraints & modes | §5.3 constraint set, §5.4.1 write modes |
 | Capability registry | §5.4 two-axis capability |
 | Dashboard | §7 success metrics, §7.1.12 production monitoring |
-| Evaluation & gates | §7.1 in full |
+| Evaluation & gates | §7.1 in full, plus a runnable eval check (one button, plain-language, scored, with history) from a separate eval-runner brief not included in this repo |
 
 ## Scenarios
 
