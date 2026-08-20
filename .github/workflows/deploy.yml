@@ -31,14 +31,6 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Debug secret presence
-        env:
-          T: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          A: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-        run: |
-          echo "token length: ${#T}"
-          echo "account length: ${#A}"
-
       - name: Deploy to Cloudflare Workers
         uses: cloudflare/wrangler-action@v3
         with:
