@@ -1,6 +1,6 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "super-frontdesk",
+  "name": "ai-receptionist-prototype",
   "compatibility_date": "2026-08-21",
   "assets": {
     "directory": "./dist",
@@ -8,7 +8,7 @@
   },
   "routes": [
     {
-      "pattern": "super-frontdesk.sosham.me",
+      "pattern": "super-front-desk.sosham.me",
       "custom_domain": true
     }
   ],
