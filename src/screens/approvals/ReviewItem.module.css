@@ -1,0 +1,72 @@
+.item {
+  display: flex;
+  gap: 14px;
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--line);
+}
+
+.item:last-child {
+  border-bottom: none;
+}
+
+.glyph {
+  flex: none;
+  margin-top: 3px;
+}
+
+.body {
+  flex: 1;
+  min-width: 0;
+}
+
+.headRow {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.caller {
+  margin: 0;
+}
+
+.context {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--ink-muted);
+}
+
+.why {
+  margin: 6px 0 var(--s-16);
+  max-width: 74ch;
+}
+
+.facts {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--s-16);
+  margin-bottom: var(--s-16);
+}
+
+.factLabel {
+  color: var(--ink-muted);
+}
+
+.factValue {
+  margin-top: 0;
+}
+
+.fieldDots {
+  margin-top: 4px;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--s-12);
+  flex-wrap: wrap;
+}
+
+.openCall {
+  margin-left: auto;
+}

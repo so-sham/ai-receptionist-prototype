@@ -1,0 +1,53 @@
+.header {
+  margin-bottom: var(--s-24);
+}
+
+.title {
+  margin: 0 0 6px;
+}
+
+.subtitle {
+  margin: 0;
+  color: var(--ink-muted);
+}
+
+.tabs {
+  margin-bottom: var(--s-24);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-16);
+}
+
+.strip {
+  margin-top: var(--s-32);
+  padding: 20px var(--s-24);
+  border: 1px solid var(--line);
+  border-radius: var(--r-10);
+  background: var(--surface);
+  max-width: 74ch;
+}
+
+.stripLine {
+  color: var(--ink);
+}
+
+.stripSub {
+  margin-top: 10px;
+  color: var(--ink-muted);
+}
+
+.reviewList {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r-10);
+  overflow: hidden;
+}
+
+.reviewFooter {
+  margin-top: var(--s-16);
+  color: var(--ink-muted);
+  max-width: 74ch;
+}

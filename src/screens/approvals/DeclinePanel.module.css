@@ -1,0 +1,38 @@
+.panel {
+  margin-top: var(--s-16);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r-10);
+  padding: var(--s-24);
+}
+
+.title {
+  margin: 0 0 4px;
+}
+
+.subhead {
+  margin: 0 0 var(--s-16);
+  color: var(--ink-muted);
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-8);
+}
+
+.chip {
+  height: 36px;
+  padding: 0 14px;
+  border-radius: var(--r-999);
+  border: 1px solid var(--line-strong);
+  background: var(--surface);
+  font-family: var(--font-sans);
+  font-size: 13px;
+  color: var(--ink);
+  transition: background var(--dur-state) var(--ease);
+}
+
+.chip:hover {
+  background: var(--surface-sunk);
+}
