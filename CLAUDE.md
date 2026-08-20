@@ -5,7 +5,7 @@ Context for an agent picking this up cold. Read this before touching anything.
 ## What this is
 
 An interactive, **non-functional** prototype of the AI Receptionist product described in
-`docs/PRD-ai-receptionist.md` (v0.1, author Shamitha). It exists to make the PRD's design
+[`PRD-ai-receptionist.md`](PRD-ai-receptionist.md) (v0.1, author Shamitha). It exists to make the PRD's design
 arguments clickable — specifically the three that are hard to convey on paper:
 
 1. **Write mode changes what the caller hears** (§5.4.1). The same call, played in direct
@@ -26,7 +26,7 @@ index.html                        the built artifact — this is what you open/s
 scripts/check.js                  20 behavioural assertions in headless Chromium — run this
 scripts/shot.js                   screenshots every view (light)
 scripts/dark.js                   screenshots key views (dark)
-docs/PRD-ai-receptionist.md       the source PRD, unmodified
+PRD-ai-receptionist.md            the source PRD, unmodified
 ```
 
 Verify: `npm install && npm test` (runs `scripts/check.js`, expects `FAILURES: 0`).

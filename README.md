@@ -1,7 +1,7 @@
 # AI Receptionist — interactive prototype
 
 A single-file, dependency-free prototype of the autonomous voice agent described in
-`docs/PRD-ai-receptionist.md`. No backend, no model, no telephony — all conversation is
+[`PRD-ai-receptionist.md`](PRD-ai-receptionist.md). No backend, no model, no telephony — all conversation is
 scripted and all metrics are simulated.
 
 ## Run it
@@ -64,7 +64,7 @@ and what was deliberately left out.
 
 ```
 index.html                        the prototype — open this
-docs/PRD-ai-receptionist.md       the source PRD, unmodified
+PRD-ai-receptionist.md            the source PRD, unmodified
 CLAUDE.md                         handoff notes for an agent picking this up
 scripts/check.js                  20 behavioural assertions in headless Chromium
 scripts/shot.js                   screenshots every view (light)
