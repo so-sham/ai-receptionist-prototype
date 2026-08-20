@@ -1,0 +1,14 @@
+{
+  "name": "ai-receptionist-prototype",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Interactive, non-functional prototype of an AI voice receptionist for dental practices",
+  "scripts": {
+    "test": "node scripts/check.js",
+    "shots": "node scripts/shot.js",
+    "shots:dark": "node scripts/dark.js"
+  },
+  "devDependencies": {
+    "playwright": "^1.62.1"
+  }
+}

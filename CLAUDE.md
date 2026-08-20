@@ -22,25 +22,22 @@ of model quality.
 ## Layout
 
 ```
-build.sh                          concatenates src/* -> ai-receptionist-prototype.html
-ai-receptionist-prototype.html    the built artifact — this is what you open/ship
-src/01-head.html                  <head>, CSS custom properties, all styles
-src/02-body.html                  static markup for all 7 views + nav rail
-src/03-data.js                    ALL content: scenarios, config, capability registry, metrics
-src/04-call.js                    call simulator engine, record emission, inspector
-src/05-backoffice.js              approval queue, review queue, config, capability registry
-src/06-dashboard-eval.js          dashboard charts, eval/gates view, boot
+index.html                        the built artifact — this is what you open/ship
 scripts/check.js                  20 behavioural assertions in headless Chromium — run this
 scripts/shot.js                   screenshots every view (light)
 scripts/dark.js                   screenshots key views (dark)
 docs/PRD-ai-receptionist.md       the source PRD, unmodified
 ```
 
-Build: `./build.sh`. Verify: `node scripts/check.js` (expects `FAILURES: 0`).
+Verify: `npm install && npm test` (runs `scripts/check.js`, expects `FAILURES: 0`).
 Playwright is required for the scripts only, not for the prototype itself.
 
-**Edit `src/*`, never the built HTML.** The built file is a pure concatenation and is
-regenerated on every build.
+**This repo ships only the built `index.html`.** The original authoring environment built it
+from a `src/` split (`01-head.html`, `02-body.html`, `03-data.js`, `04-call.js`,
+`05-backoffice.js`, `06-dashboard-eval.js`) via `build.sh`, which concatenated those files —
+but that split was not carried into this handoff, only the compiled output and the
+verification scripts were. Edit `index.html` directly; if you want the `src/*` workflow back,
+you'd need to split it out yourself and reintroduce `build.sh`.
 
 ## Architecture in one paragraph
 
@@ -56,7 +53,7 @@ diffing and nothing needs it at this size.
 ## The load-bearing function
 
 ```js
-effectiveMode(scn)  // src/04-call.js
+effectiveMode(scn)  // index.html — originally src/04-call.js
 ```
 
 This is the single place the PRD's precedence rules are encoded, and almost every

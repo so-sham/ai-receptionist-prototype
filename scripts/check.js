@@ -1,10 +1,11 @@
 const { chromium } = require('playwright');
+const path = require('path');
 const A = []; const ok=(c,m)=>A.push((c?'PASS  ':'FAIL  ')+m);
 (async () => {
   const b = await chromium.launch();
   const p = await b.newPage({ viewport:{width:1400,height:1000} });
   const errs=[]; p.on('pageerror',e=>errs.push(e.message));
-  await p.goto('file:///home/claude/proto/ai-receptionist-prototype.html');
+  await p.goto('file://' + path.resolve(__dirname, '..', 'index.html'));
 
   const run = async (id, mode) => p.evaluate(([id,mode])=>{
     CONFIG.mode = mode; selectScenario(id);

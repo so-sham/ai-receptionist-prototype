@@ -6,17 +6,20 @@ scripted and all metrics are simulated.
 
 ## Run it
 
-Open `ai-receptionist-prototype.html` in any browser. That's it.
+Open `index.html` in any browser. That's it.
 
-## Build it
+## Verify it
 
 ```bash
-./build.sh                 # concatenates src/* -> ai-receptionist-prototype.html
-node scripts/check.js      # 20 behavioural assertions, expects FAILURES: 0
-node scripts/shot.js       # screenshots every view into ./shots (needs Playwright)
+npm install                # installs Playwright (dev-only, needed for the scripts below)
+npm test                   # scripts/check.js — 20 behavioural assertions, expects FAILURES: 0
+npm run shots               # scripts/shot.js — screenshots every view into ./shots (light)
+npm run shots:dark          # scripts/dark.js — screenshots key views in dark mode
 ```
 
-Edit files in `src/`, never the built HTML.
+This repo ships only the built artifact (`index.html`) — the `src/*` + `build.sh` concatenation
+step described in `CLAUDE.md` was part of the original authoring environment and isn't included
+here. Edit `index.html` directly.
 
 ## What to click first
 
@@ -56,3 +59,14 @@ human, sedation blackout, and a caller who appears to be a minor.
 
 `CLAUDE.md` has the architecture, the invariants, the decisions made where the PRD is silent,
 and what was deliberately left out.
+
+## Layout
+
+```
+index.html                        the prototype — open this
+docs/PRD-ai-receptionist.md       the source PRD, unmodified
+CLAUDE.md                         handoff notes for an agent picking this up
+scripts/check.js                  20 behavioural assertions in headless Chromium
+scripts/shot.js                   screenshots every view (light)
+scripts/dark.js                   screenshots key views (dark)
+```
