@@ -27,6 +27,7 @@ scripts/check.js                  20 behavioural assertions in headless Chromium
 scripts/shot.js                   screenshots every view (light)
 scripts/dark.js                   screenshots key views (dark)
 PRD-ai-receptionist.md            the source PRD, unmodified
+PRD-eval-runner.md                companion PRD for the eval-runner feature below
 ```
 
 Verify: `npm install && npm test` (runs `scripts/check.js`, expects `FAILURES: 0`).
@@ -167,7 +168,7 @@ not a boolean, and `effectiveMode` needs a branch.
 
 ## Eval runner
 
-The "Evaluation & gates" view opens with a real, runnable check — not another static
+Spec: [`PRD-eval-runner.md`](PRD-eval-runner.md). The "Evaluation & gates" view opens with a real, runnable check — not another static
 table like the rest of that page. It plays all 8 `SCENARIOS` against a hand-written
 answer key (`EVAL_LABELS`) and scores five plain-language questions (`EVAL_QUESTIONS`),
 plus the two rules that never bend (zero double-bookings, zero silent overwrites),

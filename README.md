@@ -47,7 +47,7 @@ real, scored pass over all 8 calls, not another static table.
 | Constraints & modes | §5.3 constraint set, §5.4.1 write modes |
 | Capability registry | §5.4 two-axis capability |
 | Dashboard | §7 success metrics, §7.1.12 production monitoring |
-| Evaluation & gates | §7.1 in full, plus a runnable eval check (one button, plain-language, scored, with history) from a separate eval-runner brief not included in this repo |
+| Evaluation & gates | §7.1 in full, plus a runnable eval check specified in [`PRD-eval-runner.md`](PRD-eval-runner.md) |
 
 ## Scenarios
 
@@ -66,6 +66,7 @@ and what was deliberately left out.
 ```
 index.html                        the prototype — open this
 PRD-ai-receptionist.md            the source PRD, unmodified
+PRD-eval-runner.md                companion PRD for the eval-runner feature (§ below)
 CLAUDE.md                         handoff notes for an agent picking this up
 scripts/check.js                  20 behavioural assertions in headless Chromium
 scripts/shot.js                   screenshots every view (light)
