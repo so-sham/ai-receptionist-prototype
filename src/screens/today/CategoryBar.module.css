@@ -1,0 +1,49 @@
+.title {
+  margin: 0 0 4px;
+}
+
+.subline {
+  color: var(--ink-muted);
+  margin-bottom: 20px;
+}
+
+.bar {
+  display: flex;
+  height: 12px;
+  border-radius: var(--r-999);
+  overflow: hidden;
+  background: var(--surface-sunk);
+}
+
+.legend {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.legendRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.swatch {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+}
+
+.name {
+  flex: 1;
+}
+
+.count {
+  color: var(--ink-muted);
+}
+
+.value {
+  width: 64px;
+  text-align: right;
+}

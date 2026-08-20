@@ -1,0 +1,33 @@
+.header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: var(--s-24);
+}
+
+.date {
+  color: var(--ink-muted);
+}
+
+.metricStrip {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--s-24);
+  margin-bottom: var(--s-24);
+}
+
+.needsWrap {
+  margin-bottom: var(--s-24);
+}
+
+.halfGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--s-24);
+}
+
+@media (max-width: 900px) {
+  .halfGrid {
+    grid-template-columns: 1fr;
+  }
+}
