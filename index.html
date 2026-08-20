@@ -344,11 +344,20 @@ svg{display:block;overflow:visible}
       <h2>Approval queue</h2>
       <p>Slots are held, not booked. Nothing reaches the PMS until a human acts. Every approve / modify / reject is eval signal <span class="ref">§7.1.6</span>, and queue age is an operational metric because an un-worked queue turns every held slot into a broken promise <span class="ref">§5.4.1</span>.</p>
     </div>
-    <div class="srow">
+    <div class="srow" style="flex-wrap:wrap;row-gap:8px">
       <span class="chip" id="qStats">—</span>
+      <span class="chip" id="qAgeP90">—</span>
       <div class="spacer"></div>
-      <button class="btn sm" id="btnAgeQueue">Advance clock 1h</button>
+      <span class="dim mono" id="clockNow" style="font-size:12px">t+0 min</span>
+      <div class="seg" id="clockSpeedSeg">
+        <button data-speed="1" aria-pressed="true">1×</button>
+        <button data-speed="10">10×</button>
+        <button data-speed="60">60×</button>
+      </div>
+      <button class="btn sm" id="btnClockToggle">▶ Play</button>
+      <button class="btn sm" id="btnAgeQueue">+1h</button>
     </div>
+    <p style="font-size:12.5px;color:var(--ink-muted);max-width:75ch;margin:4px 0 10px">Press <b>Play</b> to run the fake clock — hold expiry, queue age p90 and the broken-promise state become watchable over a simulated day instead of one button press per hour <span class="ref">§5.4.1</span>.</p>
     <div id="approvalList"></div>
     <div class="card">
       <h3>Modification taxonomy <span class="ref">§7.1.6</span></h3>
@@ -544,7 +553,7 @@ const PMS_PROFILES = {
 const STATE = {
   pms:'opendental',
   practiceCap:{patient_lookup:true, schedule_read:true, appointment_write:true, comms_log_write:true, patient_create:true},
-  approvals:[], reviews:[], emitted:[], clockOffsetMin:0,
+  approvals:[], reviews:[], emitted:[], clockOffsetMin:0, clockPlaying:false, clockSpeed:1,
   modLog:[{k:'Time slot', n:9},{k:'Appointment type', n:4},{k:'Provider', n:3},{k:'Duration', n:1},{k:'Patient match', n:2}],
   approvalTotals:{total:120, unmodified:116}
 };
@@ -1189,7 +1198,7 @@ function buildRecord(s, mode){
 function makeApproval(s, rec){
   const type = CONFIG.types.find(t=>t.id===s.typeId);
   return {
-    call_id:rec.call_id, scn:s.id, title:s.title, created:Date.now(),
+    call_id:rec.call_id, scn:s.id, title:s.title, created:simNow(),
     patient:s.note.caller, phone:s.caller, when:s.when,
     slot:'Tue 25 Aug 2026, 14:40', provider:type?type.providers[0]:'Dr. Reyes',
     type:type?type.name:'Consultation', min:type?type.min:60,
@@ -1292,19 +1301,78 @@ function latencyHTML(){
 </script>
 <script>
 /* ---------------- approval queue (§5.4.1) ---------------- */
-function holdRemaining(a){
-  const elapsedMin = (Date.now()-a.created)/60000 + STATE.clockOffsetMin;
-  return CONFIG.holdWindowMin - elapsedMin;
+/* the queue's simulated "now" — creation timestamps and age are always measured
+   against this, never against Date.now() directly, so a hold created after the
+   clock has already advanced still gets the full hold window rather than being
+   born expired */
+function simNow(){
+  return Date.now() + STATE.clockOffsetMin*60000;
 }
-$('#btnAgeQueue').addEventListener('click', ()=>{ STATE.clockOffsetMin += 60; renderApprovals(); });
+function ageMin(a){
+  return (simNow()-a.created)/60000;
+}
+function holdRemaining(a){
+  return CONFIG.holdWindowMin - ageMin(a);
+}
+function refreshApprovalStatuses(){
+  STATE.approvals.forEach(a=>{ if(a.status==='pending' && holdRemaining(a)<=0) a.status='expired'; });
+}
+function queueAgeP90(){
+  const ages = STATE.approvals.map(a=> (a.status==='pending'||a.status==='expired') ? ageMin(a) : a.resolvedAgeMin)
+    .filter(v=>v!=null).sort((x,y)=>x-y);
+  if(!ages.length) return null;
+  return ages[Math.min(ages.length-1, Math.ceil(ages.length*0.9)-1)];
+}
+/* seed a queue spread across a simulated day, so hold expiry and the broken-promise
+   state are visible on load rather than requiring a scenario run first */
+function seedApprovals(){
+  const rules = ['Inside bookable block for the assigned provider','Type→duration fixed at the constraint-set value, not inferred','Provider accepts new patients','Not a blackout type','Daily agent ceiling within limit'];
+  [
+    {call_id:'call_seed_1', patient:'Priya Anand', phone:'+1 512 555 0110', type:'New patient · implant consult', min:60, provider:'Dr. Reyes', slot:'Tue 25 Aug 2026, 09:20', ageMin:6, conf:{intent:0.94, treatment_category:0.91, is_opportunity:0.97}, flags:[{f:'insurance_provided'}]},
+    {call_id:'call_seed_2', patient:'Owen Cross', phone:'+1 512 555 0134', type:'Hygiene recall', min:30, provider:'Dr. Okonkwo', slot:'Tue 25 Aug 2026, 10:00', ageMin:24, conf:{intent:0.96, is_opportunity:0.90}, flags:[{f:'commitment_made'}]},
+    {call_id:'call_seed_3', patient:'Marisol Fenn', phone:'+1 512 555 0159', type:'Restorative consult', min:45, provider:'Dr. Reyes', slot:'Tue 25 Aug 2026, 11:15', ageMin:48, conf:{treatment_category:0.87, intent:0.92}, flags:[{f:'price_objection'}]},
+    {call_id:'call_seed_4', patient:'D. Whitfield', phone:'+1 512 555 0177', type:'New patient · cosmetic consult', min:45, provider:'Dr. Okonkwo', slot:'Tue 25 Aug 2026, 13:40', ageMin:58, conf:{intent:0.89, is_opportunity:0.93}, flags:[]},
+    {call_id:'call_seed_5', patient:'Callum Ng', phone:'+1 512 555 0192', type:'Ortho consult', min:45, provider:'Dr. Reyes', slot:'Tue 25 Aug 2026, 08:10', ageMin:76, conf:{intent:0.71, treatment_category:0.66}, flags:[{f:'low_confidence'}]}
+  ].forEach(s=>STATE.approvals.push({
+    call_id:s.call_id, scn:null, title:s.type, created:simNow()-s.ageMin*60000,
+    patient:s.patient, phone:s.phone, when:'Mon 24 Aug 2026', slot:s.slot, provider:s.provider,
+    type:s.type, min:s.min, idem:'idem_'+s.call_id, token:'v-'+s.call_id,
+    rules, conf:s.conf, note:null, flags:s.flags, status:'pending'
+  }));
+}
+let clockTimer = null;
+function clockTick(){
+  STATE.clockOffsetMin += STATE.clockSpeed;
+  refreshApprovalStatuses();
+  if(currentView==='approval') renderApprovals(); else updateCounts();
+}
+function setClockPlaying(on){
+  STATE.clockPlaying = on;
+  clearInterval(clockTimer);
+  if(on) clockTimer = setInterval(clockTick, 1000);
+  const b = $('#btnClockToggle');
+  if(b){ b.textContent = on ? '⏸ Pause' : '▶ Play'; b.setAttribute('aria-pressed', on); }
+}
+$('#btnClockToggle').addEventListener('click', ()=>setClockPlaying(!STATE.clockPlaying));
+$('#clockSpeedSeg').addEventListener('click', e=>{
+  const b=e.target.closest('button'); if(!b) return;
+  STATE.clockSpeed = +b.dataset.speed;
+  $$('#clockSpeedSeg button').forEach(x=>x.setAttribute('aria-pressed', x===b));
+});
+$('#btnAgeQueue').addEventListener('click', ()=>{ STATE.clockOffsetMin += 60; refreshApprovalStatuses(); renderApprovals(); });
 
 function renderApprovals(){
+  refreshApprovalStatuses();
   const list = $('#approvalList');
   const pend = STATE.approvals.filter(a=>a.status==='pending' || a.status==='expired');
   const done = STATE.approvals.filter(a=>a.status!=='pending' && a.status!=='expired');
   const r = STATE.approvalTotals;
   $('#qStats').textContent = `Over the last ${r.total} approvals, ${Math.round(r.unmodified/r.total*100)}% were approved without modification`;
   $('#qStats').className = 'chip good';
+  const p90 = queueAgeP90();
+  $('#qAgeP90').textContent = p90!=null ? `Queue age p90: ${Math.round(p90)} min (n=${STATE.approvals.length})` : 'Queue age p90: —';
+  $('#qAgeP90').className = 'chip ' + (p90==null?'':p90>CONFIG.holdWindowMin?'crit':p90>CONFIG.holdWindowMin*0.75?'warn':'good');
+  $('#clockNow').textContent = `t+${STATE.clockOffsetMin} min`;
 
   if(!STATE.approvals.length){
     list.innerHTML = `<div class="empty">Nothing held.<br><span style="font-size:12.5px">Run the <b>implant consult</b> scenario in approval mode to create one.</span></div>`;
@@ -1318,8 +1386,7 @@ function renderApprovals(){
 }
 function approvalHTML(a){
   const rem = holdRemaining(a);
-  const expired = rem<=0;
-  if(expired && a.status==='pending') a.status='expired';
+  const expired = a.status==='expired';
   const cls = rem<=0?'crit':rem<20?'warn':'';
   const lowConf = Object.entries(a.conf).filter(([k,v])=>v<0.9);
   return `<div class="qitem">
@@ -1344,10 +1411,10 @@ function approvalHTML(a){
       </div>
       <div>
         <div style="font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-muted);margin-bottom:6px">What the caller was told</div>
-        <div class="txt" style="background:var(--wash);padding:9px 11px;border-radius:9px;font-size:13px">“I've held Tuesday the 25th at 2:40 for you. The office will confirm that by text within the hour — and if that time doesn't work out on their end, they'll call you with the next option.”</div>
+        <div class="txt" style="background:var(--wash);padding:9px 11px;border-radius:9px;font-size:13px">“I've held ${esc(a.slot)} for you. The office will confirm that by text within the hour — and if that time doesn't work out on their end, they'll call you with the next option.”</div>
         <div class="dim" style="font-size:12px;margin-top:6px">No confirmation language. No “see you then”. A stated time by which they will hear back.</div>
         <div style="font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-muted);margin:12px 0 6px">Flags</div>
-        ${a.flags.map(f=>`<span class="chip ${f.f==='insurance_provided'?'warn':'info'}" style="margin:0 4px 4px 0">${f.f}</span>`).join('')}
+        ${a.flags.length ? a.flags.map(f=>`<span class="chip ${['emergency_signal','insurance_not_accepted','constraint_blocked'].includes(f.f)?'crit':f.f==='low_confidence'?'warn':f.f==='insurance_provided'?'warn':'info'}" style="margin:0 4px 4px 0">${f.f}</span>`).join('') : '<span class="dim" style="font-size:12.5px">No flags raised.</span>'}
         <div style="font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-muted);margin:12px 0 6px">Identifiers</div>
         <div class="mono" style="font-size:11.5px">idempotency ${a.idem}<br>slot token ${a.token}<br>insurance ••••0397 <span class="dim">(masked in this task body — §5.4.2)</span></div>
       </div>
@@ -1366,25 +1433,25 @@ function actOnApproval(id, act){
   const a = STATE.approvals.find(x=>x.call_id===id); if(!a) return;
   const rec = STATE.emitted.find(r=>r.call_id===a.call_id);
   if(act==='approve'){
-    a.status='approved';
+    a.status='approved'; a.resolvedAgeMin = ageMin(a);
     if(rec){ rec.outcome='booked'; rec.enumGap=false; }
     STATE.approvalTotals.total++; STATE.approvalTotals.unmodified++;
     toast(`Written to the PMS with ${a.idem} — the key generated when the hold was taken, so a retry cannot create a second appointment. One SMS sent: confirmed.`);
   } else if(act==='modify'){
     const what = prompt('What did you change? (time slot / appointment type / provider / duration / patient match)','time slot');
     if(what===null) return;
-    a.status='modified'; STATE.approvalTotals.total++;
+    a.status='modified'; a.resolvedAgeMin = ageMin(a); STATE.approvalTotals.total++;
     if(rec){ rec.outcome='booked'; rec.enumGap=false; }
     const key = what.trim().toLowerCase();
     const bucket = STATE.modLog.find(m=>m.k.toLowerCase()===key) || STATE.modLog.find(m=>m.k==='Time slot');
     bucket.n++;
     toast(`Corrected version written. The correction is logged as eval signal §7.1.6 — bucketed under “${bucket.k}”. This is what tells you where to fix.`);
   } else if(act==='reject'){
-    a.status='rejected'; STATE.approvalTotals.total++;
+    a.status='rejected'; a.resolvedAgeMin = ageMin(a); STATE.approvalTotals.total++;
     if(rec){ rec.outcome='captured_no_booking'; rec.reason_not_booked='no_suitable_time'; rec.enumGap=false; }
     toast('Hold released, slot returned to the schedule, callback task generated. The caller gets exactly one SMS reflecting the final state: “we’ll call you.”');
   } else if(act==='callback'){
-    a.status='rejected';
+    a.status='rejected'; a.resolvedAgeMin = ageMin(a);
     toast('Callback task created. Logged against approval-queue age so this shows up as an operational failure, not a caller-behaviour one.');
   }
   renderApprovals();
@@ -1719,6 +1786,8 @@ function renderEval(){
 /* ---------------- boot ---------------- */
 renderScenarioList();
 selectScenario('implant');
+seedApprovals();
+refreshApprovalStatuses();
 updateCounts();
 $$('#modeSeg button, #modeSeg2 button').forEach(x=>x.setAttribute('aria-pressed', x.dataset.mode===CONFIG.mode));
 $('#practiceName').textContent = `${CONFIG.practice} · ${PMS_PROFILES[STATE.pms].name}`;

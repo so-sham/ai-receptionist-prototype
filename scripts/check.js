@@ -36,8 +36,8 @@ const A = []; const ok=(c,m)=>A.push((c?'PASS  ':'FAIL  ')+m);
   // 4 approval mode never reports booked at emission
   r = await run('implant','approval');
   ok(r.rec.outcome==='pending_approval', 'approval mode emits pending_approval, not booked  (got '+r.rec.outcome+')');
-  const nApp = await p.evaluate(()=>STATE.approvals.length);
-  ok(nApp>0, 'approval task created');
+  const nApp = await p.evaluate(()=>STATE.approvals.some(a=>a.call_id==='call_implant'));
+  ok(nApp, 'approval task created');
 
   // 5 emergency: verbatim config text, hold released, nothing booked
   const custom = 'GO TO THE EMERGENCY ROOM NOW AND CALL 512-555-0190.';
