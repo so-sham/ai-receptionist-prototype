@@ -881,7 +881,7 @@ const SCENARIOS = [
 const TRAFFIC = {
   offered:1284, answered:1261,
   outcomes:[
-    {k:'booked', n:412}, {k:'captured_no_booking', n:263}, {k:'escalated_live', n:198},
+    {k:'booked', n:403}, {k:'pending_approval', n:9}, {k:'captured_no_booking', n:263}, {k:'escalated_live', n:198},
     {k:'resolved_no_booking', n:214}, {k:'escalated_queue', n:126}, {k:'caller_abandoned', n:48}
   ],
   reasons:[
@@ -1549,12 +1549,16 @@ function columnChart(data, officeHours){
 function renderDashboard(){
   const T = TRAFFIC;
   const booked = T.outcomes.find(o=>o.k==='booked').n;
-  const contained = booked + T.outcomes.find(o=>o.k==='resolved_no_booking').n + T.outcomes.find(o=>o.k==='captured_no_booking').n;
+  const pendingApproval = T.outcomes.find(o=>o.k==='pending_approval').n;
+  const capturedNoBooking = T.outcomes.find(o=>o.k==='captured_no_booking').n;
+  const escalated = T.outcomes.find(o=>o.k==='escalated_live').n + T.outcomes.find(o=>o.k==='escalated_queue').n;
+  const contained = booked + T.outcomes.find(o=>o.k==='resolved_no_booking').n + capturedNoBooking;
+  const containmentPct = Math.round(pct(contained,T.answered));
   const afterHours = T.byHour.filter(([h])=>h<T.officeHours[0]||h>=T.officeHours[1]).reduce((a,b)=>a+b[1],0);
   const tiles = [
     {l:'Answer rate', v:pct(T.answered,T.offered).toFixed(1)+'%', f:'target &gt;98% · §7', good:true},
-    {l:'Containment', v:Math.round(pct(contained,T.answered))+'%', f:'target 55%', good:true},
-    {l:'Booking completion', v:'71%', f:'booking-intent calls, writes supported · target 70%', good:true},
+    {l:'Containment', v:containmentPct+'%', f:'target 55%', good:true},
+    {l:'Booking completion', v:'71%', f:'booking-intent calls, writes supported, excludes calls still pending approval · target 70%', good:true},
     {l:'Schedule integrity', v:'0.25%', f:'bookings needing human correction · <b>hard gate &lt;0.5%</b>', good:true, gate:true},
     {l:'Double-bookings', v:'0', f:'<b>hard gate — 0</b>', good:true, gate:true},
     {l:'After-hours opportunities', v:afterHours.toLocaleString(), f:'calls the practice would not have heard'}
@@ -1572,8 +1576,9 @@ function renderDashboard(){
 
   <div class="grid2">
     <div class="chartcard"><h4>Outcome</h4><div class="cs">Every call emits a record whether or not it books <span class="ref">§5.5</span></div>
-      ${hbars(T.outcomes, {pctOf:true})}
-      <div class="callout" style="margin-bottom:0"><b>Containment is booked + resolved + captured</b> — 70% here. Note what is <i>not</i> a failure: <span class="mono">captured_no_booking</span> at 21% is the after-hours and constraint-blocked work the practice would never have seen at all, each row carrying an enumerated reason. Escalations are 26% combined, and the two escalation rows are kept apart because a live transfer and a queued callback are different promises <span class="ref">§5.6</span>.</div></div>
+      ${hbars(T.outcomes.map(o=>({...o, color:o.k==='pending_approval'?'var(--warning)':undefined})), {pctOf:true})}
+      <div class="callout" style="margin-bottom:0"><b>Containment is booked + resolved + captured</b> — ${containmentPct}% here. Note what is <i>not</i> a failure: <span class="mono">captured_no_booking</span> at ${Math.round(pct(capturedNoBooking,T.answered))}% is the after-hours and constraint-blocked work the practice would never have seen at all, each row carrying an enumerated reason. Escalations are ${Math.round(pct(escalated,T.answered))}% combined, and the two escalation rows are kept apart because a live transfer and a queued callback are different promises <span class="ref">§5.6</span>.</div>
+      <div class="callout warn" style="margin-bottom:0;margin-top:8px"><b><span class="mono">pending_approval</span> (${pendingApproval}) counts toward neither containment nor escalation.</b> <span class="ref">§5.5</span>'s outcome enum has no value for "held, awaiting a human" — these are snapshot calls whose approval task nobody has actioned yet. Folding them into <span class="mono">booked</span> would inflate completion by exactly this count; folding them into <span class="mono">captured_no_booking</span> understates it. They sit in their own row until a human approves, modifies, or rejects and the record reconciles <span class="ref">§5.4.1</span>.</div></div>
     <div class="chartcard"><h4>Why bookings did not happen</h4><div class="cs">Closed enum. This is the chart that does not exist when disposition is free text <span class="ref">§7.1 Finding 3</span></div>
       ${hbars(T.reasons.map(r=>({...r, color: r.k==='insurance_not_accepted'?'var(--critical)': r.k==='constraint_blocked'?'var(--warning)':'var(--series-1)'})))}
       <div class="callout crit" style="margin-bottom:0"><b>58 calls lost to a carrier the practice does not take.</b> That is not a scheduling failure and it should never be logged as one — these are patients the practice can still call back <span class="ref">§5.4.2</span>.</div></div>
