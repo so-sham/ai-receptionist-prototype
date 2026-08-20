@@ -1,0 +1,11 @@
+const { chromium } = require('playwright');
+(async()=>{const b=await chromium.launch();const p=await b.newPage({viewport:{width:1400,height:1000}});
+await p.goto('file:///home/claude/proto/ai-receptionist-prototype.html');
+await p.click('#themeSeg button[data-theme="dark"]');
+await p.click('.navbtn[data-view="capability"]'); await p.waitForTimeout(300);
+await p.screenshot({path:'shots/d-cap.png',fullPage:true});
+await p.click('.navbtn[data-view="dashboard"]'); await p.waitForTimeout(300);
+await p.screenshot({path:'shots/d-dash.png',fullPage:false});
+await p.click('.navbtn[data-view="config"]'); await p.waitForTimeout(300);
+await p.screenshot({path:'shots/d-config.png',fullPage:true});
+await b.close();})();
