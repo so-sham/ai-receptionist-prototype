@@ -1,14 +1,21 @@
 {
   "name": "ai-receptionist-prototype",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
-  "description": "Interactive, non-functional prototype of an AI voice receptionist for dental practices",
+  "description": "AI understands the call, plain code decides what to do about it — a small working prototype",
+  "type": "module",
   "scripts": {
-    "test": "node scripts/check.js",
-    "shots": "node scripts/shot.js",
-    "shots:dark": "node scripts/dark.js"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "node test/decide.test.js"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
   },
   "devDependencies": {
-    "playwright": "^1.62.1"
+    "@vitejs/plugin-react": "^4.3.4",
+    "vite": "^5.4.11"
   }
 }

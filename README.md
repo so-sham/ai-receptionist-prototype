@@ -1,72 +1,70 @@
-# AI Receptionist — interactive prototype
+# AI Receptionist — prototype
 
-A single-file, dependency-free prototype of the autonomous voice agent described in
-[`PRD-ai-receptionist.md`](PRD-ai-receptionist.md). No backend, no model, no telephony — all conversation is
-scripted and all metrics are simulated.
+A small, working prototype built from [`PRD-ai-receptionist.md`](PRD-ai-receptionist.md).
+It demonstrates one idea end to end: **the AI understands the call, plain code decides
+what to do about it.** A transcript goes in, a structured record comes out, and a pure
+function reads that record plus the clinic's settings to decide what happens next —
+booked, held for approval, taken as a message, logged, or escalated to a human.
 
 ## Run it
 
-Open `index.html` in any browser. That's it.
-
-## Verify it
-
 ```bash
-npm install                # installs Playwright (dev-only, needed for the scripts below)
-npm test                   # scripts/check.js — 20 behavioural assertions, expects FAILURES: 0
-npm run shots               # scripts/shot.js — screenshots every view into ./shots (light)
-npm run shots:dark          # scripts/dark.js — screenshots key views in dark mode
+npm install
+npm run dev
 ```
 
-This repo ships only the built artifact (`index.html`) — the `src/*` + `build.sh` concatenation
-step described in `CLAUDE.md` was part of the original authoring environment and isn't included
-here. Edit `index.html` directly.
+Open the URL Vite prints (usually `http://localhost:5173`).
+
+## Note on the "AI" step
+
+This build's extraction step (`src/lib/extract.js`) is **simulated**, not a live model
+call — no Anthropic API key was available while building it. Each of the 8 calls has a
+pre-written "what the AI understood" record, including two deliberate mistakes so the
+Tests screen has real failures to show. The "Edit the AI's instructions" box on the
+Settings screen is real and editable, but it doesn't change the (mocked) output — it
+says so underneath the box. See `CLAUDE.md` for exactly what wiring up a live call would
+take.
 
 ## What to click first
 
-1. **Live call → New patient · implant consult.** Press *Place call*. Watch the latency
-   breakdown per turn and the structured record building on the right.
-2. Switch **Write mode** to *Direct write* and replay the same call. The caller now hears a
-   confirmation instead of a hold.
-3. Go to **Capability registry**, set the connected PMS to *Eaglesoft (server, on-prem)*, and
-   replay it again. The agent stops promising something the system cannot deliver.
+1. **Call → "New patient, cleaning" → "See what the AI understood."** Watch the record
+   build on the right, and the action block above it (in this default "Ask first" mode,
+   the AI holds the slot rather than confirming).
+2. **Settings → set booking to "Book it"**, go back to Call and rerun **"Wants an
+   implant."** It still refuses — implants are on the never-book list, and that beats
+   every other setting, including "Book it."
+3. **Call → "Swelling mid-call."** Run it. The AI drops everything and escalates to a
+   human, regardless of what else was happening on the call.
+4. **Tests → "Run the tests."** Runs all 8 calls against their hand labels and shows a
+   score, a per-field breakdown, what failed, and a run history with a sparkline.
 
-Same call, three different promises. That is the §5.4 argument, made clickable.
+## Verify the decision logic
 
-Then: **Approval queue** (press *Advance clock 1h* to see a hold expire into a broken
-promise), **Constraints & modes** (try setting sedation to direct write — you can't),
-**Dashboard**, and **Evaluation & gates**.
+```bash
+npm test
+```
 
-## Surfaces
-
-| View | PRD sections |
-|---|---|
-| Live call simulator | §5.1 latency, §5.2 turn-taking, §5.6 escalation, §5.7 failure modes |
-| Approval queue | §5.4.1, §7.1.6 approval-mode eval signal |
-| Review queue | §5.5 confidence threshold, §6 P0.15 |
-| Constraints & modes | §5.3 constraint set, §5.4.1 write modes |
-| Capability registry | §5.4 two-axis capability |
-| Dashboard | §7 success metrics, §7.1.12 production monitoring |
-| Evaluation & gates | §7.1 in full |
-
-## Scenarios
-
-Drawn from the adversarial set in §7.1.2: new patient implant consult (after hours),
-non-accepted carrier, emergency language mid-booking, supply vendor using treatment
-vocabulary, returning patient with a write collision, barge-in plus an explicit request for a
-human, sedation blackout, and a caller who appears to be a minor.
-
-## Handing this to an agent
-
-`CLAUDE.md` has the architecture, the invariants, the decisions made where the PRD is silent,
-and what was deliberately left out.
+Runs `test/decide.test.js` — 9 plain assertions, one per branch of `decide()`, the pure
+function at the heart of this prototype. Expects `9 checks, 0 failures`.
 
 ## Layout
 
 ```
-index.html                        the prototype — open this
-PRD-ai-receptionist.md            the source PRD, unmodified
-CLAUDE.md                         handoff notes for an agent picking this up
-scripts/check.js                  20 behavioural assertions in headless Chromium
-scripts/shot.js                   screenshots every view (light)
-scripts/dark.js                   screenshots key views (dark)
+src/
+  App.jsx                    tab navigation + top-level state
+  data/calls.js                8 scripted calls with hand labels
+  lib/decide.js                 the decision function — see CLAUDE.md
+  lib/extract.js                 simulated "AI understanding" (see note above)
+  lib/evals.js                    scoring + localStorage history
+  screens/CallScreen.jsx           pick a call, see the record + the action
+  screens/SettingsScreen.jsx        booking mode, capability toggle, never-book list
+  screens/EvalScreen.jsx             run the tests, see the score
+test/decide.test.js         branch coverage for decide()
+PRD-ai-receptionist.md    the build spec this was built from
+CLAUDE.md                  handoff notes for an agent picking this up
 ```
+
+## Handing this to an agent
+
+`CLAUDE.md` has the architecture, the load-bearing function, what's mocked and why, and
+the decisions made where the spec was silent.
