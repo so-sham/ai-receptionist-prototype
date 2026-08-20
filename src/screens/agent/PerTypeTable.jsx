@@ -25,6 +25,9 @@ export default function PerTypeTable() {
       <TableShell className={styles.shell}>
         {APPOINTMENT_TYPES.map((t) => {
           const current = selectors.typeModeFor(state, t.key);
+          // Locked rows explain themselves to screen readers through this id,
+          // not only through a hover title and a toast the keyboard never sees.
+          const reasonId = t.locked ? `per-type-locked-${t.key}` : undefined;
           return (
             <div key={t.key} className={styles.row}>
               <div className="t-body">{t.label}</div>
@@ -44,6 +47,10 @@ export default function PerTypeTable() {
                       type="button"
                       className={classes}
                       title={t.locked ? 'On the never-book list — details only' : o.label}
+                      aria-label={`${t.label}: ${o.label}`}
+                      aria-pressed={selected}
+                      aria-disabled={t.locked || undefined}
+                      aria-describedby={reasonId}
                       onClick={() => setTypeMode(t.key, o.key)}
                     >
                       {o.label}
@@ -52,6 +59,11 @@ export default function PerTypeTable() {
                 })}
               </div>
               <div className={styles.lock}>{t.lockReason || ''}</div>
+              {t.locked ? (
+                <span id={reasonId} className="u-sr-only">
+                  Fixed: {t.label} is on the never-book list, so it always takes details only.
+                </span>
+              ) : null}
             </div>
           );
         })}

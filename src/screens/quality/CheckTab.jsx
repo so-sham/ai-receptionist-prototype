@@ -7,7 +7,17 @@
 // README: "the person who most needs this is not an engineer, and a screen of
 // controls stops them running it at all."
 
-import { Button, Card, Pill, ProgressBar, TableHeader, TableRow, TableShell } from '../../components';
+import {
+  Button,
+  Card,
+  ErrorState,
+  Pill,
+  ProgressBar,
+  SkeletonTable,
+  TableHeader,
+  TableRow,
+  TableShell,
+} from '../../components';
 import { CHECKS, EMERGENCY_CHECK, FAILURES, RUNS, RUN_NAMES } from '../../data';
 import { useConsole, selectors } from '../../state';
 
@@ -31,13 +41,76 @@ const correctCount = (score) => parseInt(String(score), 10);
 // Change/delta strings carry colour ONLY when they are negative.
 const isNegative = (delta) => String(delta).startsWith('↓');
 
+/**
+ * The one live region for the whole Check tab.
+ *
+ * It stays mounted across idle / running / done so its text CHANGES rather than
+ * appearing with content already in it — a live region that mounts populated is
+ * usually not announced at all. Progress and the final verdict both flow
+ * through here, which is also why the running card itself carries no role of
+ * its own: two regions would announce the same sentence twice.
+ */
+function RunAnnouncer() {
+  const { state } = useConsole();
+
+  let message = '';
+  if (state.runState === 'running') {
+    message = `Checking call ${state.runIndex} of ${state.qualitySetCount}`;
+  } else if (state.runState === 'done') {
+    message = `Check complete. ${correctCount(LATEST_RUN.score)} of ${state.qualitySetCount} correct. ${
+      EMERGENCY_CHECK.pass ? 'All safety checks passed.' : 'A safety check failed.'
+    }`;
+  }
+
+  return (
+    <div className="u-sr-only" role="status" aria-live="polite">
+      {message}
+    </div>
+  );
+}
+
 export default function CheckTab() {
+  const { state, setDataState } = useConsole();
+
+  if (state.dataState === 'error') {
+    return (
+      <Card className={styles.card}>
+        <ErrorState
+          message="We couldn’t load the quality results just now. Check your connection and try again."
+          onRetry={() => setDataState('ready')}
+        />
+      </Card>
+    );
+  }
+
+  if (state.dataState === 'loading') {
+    return (
+      <div>
+        <Card className={styles.card}>
+          <SkeletonTable rows={2} cols="1fr" />
+        </Card>
+        <div className={styles.checkTable}>
+          <SkeletonTable rows={5} cols={CHECK_COLS} />
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <>
+      <RunAnnouncer />
+      <CheckBody />
+    </>
+  );
+}
+
+function CheckBody() {
   const { state, startRun, cancelRun } = useConsole();
 
   if (state.runState === 'running') {
     return (
       <Card className={styles.card}>
-        <div role="status" aria-live="polite">
+        <div>
           <div className={`t-h2 ${styles.runningTitle}`}>
             Checking call {state.runIndex} of {state.qualitySetCount}
           </div>

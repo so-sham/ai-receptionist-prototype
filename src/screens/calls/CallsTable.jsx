@@ -5,8 +5,10 @@ import styles from './CallsTable.module.css';
 // README §2: tracks at >=1240px vs 900-1239px. The tablet track collapses
 // Type to 0px and the cell is hidden with visibility (not display) so later
 // columns don't shift — see .hiddenCell below.
-const DESKTOP_COLS = '32px 220px 96px minmax(280px,1fr) 150px 140px 100px 40px';
-const TABLET_COLS = '28px 148px 72px minmax(150px,1fr) 0px 132px 74px 20px';
+// Exported so the loading skeleton can match the real column geometry exactly
+// (README: "skeletons matching the final layout").
+export const DESKTOP_COLS = '32px 220px 96px minmax(280px,1fr) 150px 140px 100px 40px';
+export const TABLET_COLS = '28px 148px 72px minmax(150px,1fr) 0px 132px 74px 20px';
 
 /**
  * Desktop/tablet table body: header + rows, grid-based (>=900px). Callers

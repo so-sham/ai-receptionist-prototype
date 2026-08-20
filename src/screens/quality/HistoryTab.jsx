@@ -47,12 +47,16 @@ export default function HistoryTab() {
             selected={r.selected}
             onClick={() => toggleRunSelection(r.n)}
             className={styles.gutter}
+            ariaLabel={`Run ${r.n}, ${r.when}, scored ${r.score}. Select to compare.`}
+            ariaPressed={r.selected}
           >
+            {/* The ROW is the control — it is what receives focus and what Enter
+                toggles. The box is the picture of that state, so it is hidden
+                from assistive tech rather than claiming a role it can't honour
+                (a role="checkbox" that Tab can never reach). */}
             <span
               className={`${styles.box} ${r.selected ? styles.boxOn : ''}`}
-              role="checkbox"
-              aria-checked={r.selected}
-              aria-label={`Compare run ${r.n}`}
+              aria-hidden="true"
             >
               {r.selected ? '✓' : ''}
             </span>

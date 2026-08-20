@@ -49,7 +49,24 @@ export default function useConsoleKeyboard(route) {
     const onKeyDown = (e) => {
       if (e.key === 'Escape') {
         // Escape works everywhere, including from inside a modal's text input.
-        escape();
+        //
+        // But Drawer and Modal already close THEMSELVES on Escape, and each one
+        // clears its own store flag as it goes. Dispatching the global ESCAPE on
+        // top of that closed two layers on a single keypress: the primitive
+        // cleared its flag first, then the reducer saw that layer already shut
+        // and moved on to the one beneath it — which is how Escape inside the
+        // quality-set modal used to tear down the call drawer behind it and lose
+        // the call the operator was reading.
+        //
+        // So the store handles only the overlays no primitive owns. Today that
+        // is the Approvals decline panel, which is plain markup rather than a
+        // Modal.
+        const ownedByAPrimitive =
+          state.openCallId !== null ||
+          state.compareOpen ||
+          state.qualitySetModalOpen ||
+          state.modifyFor !== null;
+        if (!ownedByAPrimitive) escape();
         return;
       }
 

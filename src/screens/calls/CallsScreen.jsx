@@ -7,14 +7,26 @@ import {
   isNarrow,
   breakpoint,
 } from '../../state/selectors.js';
-import { TableShell, EmptyState, Chip, Button } from '../../components/index.js';
+import {
+  TableShell,
+  EmptyState,
+  ErrorState,
+  SkeletonTable,
+  Chip,
+  Button,
+} from '../../components/index.js';
 import FilterBar from './FilterBar.jsx';
-import CallsTable from './CallsTable.jsx';
+import CallsTable, { DESKTOP_COLS, TABLET_COLS } from './CallsTable.jsx';
 import CallCard from './CallCard.jsx';
 import styles from './CallsScreen.module.css';
 
+// The stacked-card layout under 900px has no columns, so its skeleton is a
+// single wide block per row rather than the table's eight tracks.
+const CARD_COLS = '1fr';
+
 export default function CallsScreen() {
-  const { state, openCall, setQuery, toggleFilter, removeFilter, clearFilters } = useConsole();
+  const { state, openCall, setQuery, toggleFilter, removeFilter, clearFilters, setDataState } =
+    useConsole();
 
   const rows = visibleCalls(state);
   const chips = filterChipLabels(state);
@@ -23,6 +35,9 @@ export default function CallsScreen() {
 
   const narrow = isNarrow(state);
   const tablet = breakpoint(state) === 'tablet';
+
+  const loading = state.dataState === 'loading';
+  const errored = state.dataState === 'error';
 
   return (
     <div>
@@ -35,6 +50,7 @@ export default function CallsScreen() {
         query={state.query}
         onQueryChange={setQuery}
         pills={FILTER_PILLS}
+        activeFilters={state.filters}
         onTogglePill={toggleFilter}
         onExport={() => {}}
         stickyTop={narrow ? '56px' : '0px'}
@@ -54,8 +70,18 @@ export default function CallsScreen() {
       ) : null}
 
       <div className={styles.tableWrap}>
+        {loading ? (
+          // Five skeleton rows on the real column tracks — never a full-page
+          // spinner, and never a layout that jumps when the data lands.
+          <SkeletonTable rows={5} cols={narrow ? CARD_COLS : tablet ? TABLET_COLS : DESKTOP_COLS} />
+        ) : (
         <TableShell>
-          {rows.length === 0 ? (
+          {errored ? (
+            <ErrorState
+              message="We couldn’t load your calls just now. Check your connection and try again."
+              onRetry={() => setDataState('ready')}
+            />
+          ) : rows.length === 0 ? (
             <EmptyState
               message="No calls match these filters."
               action={{ label: 'Clear filters', onClick: clearFilters }}
@@ -78,9 +104,12 @@ export default function CallsScreen() {
             />
           )}
         </TableShell>
+        )}
       </div>
 
-      <div className={`t-small ${styles.hint}`}>j / k to move · Enter to open · Esc to close</div>
+      {loading || errored ? null : (
+        <div className={`t-small ${styles.hint}`}>j / k to move · Enter to open · Esc to close</div>
+      )}
     </div>
   );
 }

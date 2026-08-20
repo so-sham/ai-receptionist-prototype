@@ -14,13 +14,17 @@ export default function Drawer({ open, onClose, width = '560px', header, footer,
     if (!open) return undefined
 
     const handleKeyDown = (e) => {
-      if (e.key === 'Escape') {
-        onClose && onClose()
-      }
+      if (e.key !== 'Escape') return
+      // A modal can be rendered INSIDE this drawer (the call drawer's "Add to
+      // quality set"). Escape belongs to the innermost layer, so stand down
+      // while this panel still contains an open dialog -- otherwise the drawer
+      // closes behind the modal and takes the whole call with it.
+      if (panelRef.current && panelRef.current.querySelector('[role="dialog"]')) return
+      onClose && onClose()
     }
     document.addEventListener('keydown', handleKeyDown)
     return () => document.removeEventListener('keydown', handleKeyDown)
-  }, [open, onClose])
+  }, [open, onClose, panelRef])
 
   if (!open) return null
 

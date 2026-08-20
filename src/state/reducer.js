@@ -181,17 +181,12 @@ const setStatus = (state, id, status, reason) => ({
 
 const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
 
-// Every overlay that Escape should dismiss, in one place so the keyboard hook
-// and the reducer can't drift apart.
-export const OVERLAY_RESET = {
+// Everything the call drawer owns, cleared together whenever it closes.
+const DRAWER_RESET = {
   openCallId: null,
   highlightedTurn: null,
   playing: false,
   agentPanelExpanded: false,
-  compareOpen: false,
-  qualitySetModalOpen: false,
-  modifyFor: null,
-  declineFor: null,
 };
 
 /* ------------------------------------------------------------------ *
@@ -464,10 +459,19 @@ export function reducer(state, action) {
 
     case A.ESCAPE:
       // README: "Esc → close drawer, compare drawer, quality-set modal, change
-      // modal, decline panel." Only one of these is ever logically open at a
-      // time, so closing them all is both the simplest and the correct
-      // behaviour — no priority order to get wrong.
-      return { ...state, ...OVERLAY_RESET };
+      // modal, decline panel."
+      //
+      // These are NOT mutually exclusive: "Add to quality set" opens its modal
+      // from inside the call drawer, so both are open at once. Dismissing every
+      // overlay in one go therefore tore the drawer down behind the modal and
+      // lost the call the operator was still reading. Escape closes the
+      // INNERMOST layer only, outermost last.
+      if (state.qualitySetModalOpen) return { ...state, qualitySetModalOpen: false };
+      if (state.modifyFor !== null) return { ...state, modifyFor: null };
+      if (state.declineFor !== null) return { ...state, declineFor: null };
+      if (state.compareOpen) return { ...state, compareOpen: false };
+      if (state.openCallId !== null) return { ...state, ...DRAWER_RESET };
+      return state;
 
     default:
       return state;

@@ -27,6 +27,7 @@ export default function FallbackRulesCard() {
             label={r.label}
             value={r.value}
             locked={r.locked}
+            reason={r.toast}
             title={r.locked ? r.toast : `Change ${r.label.toLowerCase()}`}
             onClick={() => toast(r.locked ? r.toast : `Editing “${r.label.toLowerCase()}”.`)}
           />

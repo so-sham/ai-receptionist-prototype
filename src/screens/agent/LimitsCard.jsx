@@ -27,6 +27,7 @@ export default function LimitsCard() {
             label={l.label}
             value={l.value}
             locked={l.locked}
+            reason={l.toast}
             title={l.locked ? l.toast : `Change ${l.label.toLowerCase()}`}
             onClick={() => toast(l.locked ? l.toast : `Editing “${l.label.toLowerCase()}”.`)}
           />

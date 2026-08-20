@@ -34,35 +34,53 @@ export default function CapabilityTable() {
           <div className={styles.center}>You've switched on</div>
           <div>Status</div>
         </div>
-        {rows.map((c) => (
-          <div key={c.key} className={styles.row}>
-            <div className="t-body">{c.label}</div>
-            <button
-              type="button"
-              className={`${styles.supportBtn} ${
-                c.supported ? styles.supported : styles.unsupported
-              }`}
-              onClick={flashUnsupported}
-              title={
-                c.supported
-                  ? 'Your practice management system permits this'
-                  : 'Your practice management system does not expose this'
-              }
-            >
-              {c.supported ? '✓' : '✗'}
-            </button>
-            <div className={styles.toggleCell}>
-              <Toggle
-                checked={c.on}
-                readOnly={!c.supported}
-                onChange={() => toggleCapability(c.key)}
-                onBlocked={() => toggleCapability(c.key)}
-                label={`Switch ${c.label} on or off`}
-              />
+        {rows.map((c) => {
+          // The support column is read-only for EVERY row — it reports what the
+          // connected system exposes, which is not a practice setting. Both the
+          // fact and the reason have to reach a screen reader, so the glyph gets
+          // a real name and the reason gets its own referenced text.
+          const supportReasonId = `cap-support-reason-${c.key}`;
+          const offReasonId = `cap-off-reason-${c.key}`;
+          return (
+            <div key={c.key} className={styles.row}>
+              <div className="t-body">{c.label}</div>
+              <button
+                type="button"
+                className={`${styles.supportBtn} ${
+                  c.supported ? styles.supported : styles.unsupported
+                }`}
+                onClick={flashUnsupported}
+                aria-label={`${c.label}: your software ${
+                  c.supported ? 'supports this' : 'does not support this'
+                }`}
+                aria-disabled="true"
+                aria-describedby={supportReasonId}
+              >
+                <span aria-hidden="true">{c.supported ? '✓' : '✗'}</span>
+              </button>
+              <span id={supportReasonId} className="u-sr-only">
+                Read-only: this reflects your practice management system, not a setting you
+                control.
+              </span>
+              <div className={styles.toggleCell}>
+                <Toggle
+                  checked={c.on}
+                  readOnly={!c.supported}
+                  onChange={() => toggleCapability(c.key)}
+                  onBlocked={() => toggleCapability(c.key)}
+                  label={`Switch ${c.label} on or off`}
+                  describedBy={c.supported ? undefined : offReasonId}
+                />
+              </div>
+              {c.supported ? null : (
+                <span id={offReasonId} className="u-sr-only">
+                  {TOAST_COPY.capabilityUnsupported}
+                </span>
+              )}
+              <div className={`t-mono ${styles[TONE_CLASS[c.statusTone]]}`}>{c.status}</div>
             </div>
-            <div className={`t-mono ${styles[TONE_CLASS[c.statusTone]]}`}>{c.status}</div>
-          </div>
-        ))}
+          );
+        })}
         <div className={styles.footer}>{footnote}</div>
       </TableShell>
     </section>

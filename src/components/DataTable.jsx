@@ -27,7 +27,19 @@ export function TableHeader({ cols, children, className }) {
  * selected paints the row --accent-wash; onClick makes the row interactive
  * (cursor pointer, hover --accent-wash).
  */
-export function TableRow({ cols, height = 52, selected = false, onClick, children, className }) {
+export function TableRow({
+  cols,
+  height = 52,
+  selected = false,
+  onClick,
+  children,
+  className,
+  // Optional accessible name and toggle state for rows that are a control in
+  // their own right (the Quality run list toggles a compare selection), so the
+  // row does not have to announce its raw cell text.
+  ariaLabel,
+  ariaPressed,
+}) {
   const clickable = typeof onClick === 'function'
   const classes = [styles.row, clickable ? styles.clickable : null, selected ? styles.selected : null, className]
     .filter(Boolean)
@@ -40,6 +52,8 @@ export function TableRow({ cols, height = 52, selected = false, onClick, childre
       onClick={onClick}
       role={clickable ? 'button' : undefined}
       tabIndex={clickable ? 0 : undefined}
+      aria-label={clickable ? ariaLabel : undefined}
+      aria-pressed={clickable ? ariaPressed : undefined}
       onKeyDown={
         clickable
           ? (e) => {

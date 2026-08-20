@@ -31,7 +31,23 @@ export default function NeedsYouList() {
       {NEEDS_YOU.length ? (
         <div className={styles.rows}>
           {NEEDS_YOU.map((n) => (
-            <div key={n.callId} className={styles.row} onClick={() => openCall(n.callId)}>
+            // The whole row is the target (README: "Needs-you row (anywhere on
+            // the row)"), so it has to be reachable and operable from the
+            // keyboard too — a bare onClick div is mouse-only.
+            <div
+              key={n.callId}
+              className={styles.row}
+              role="button"
+              tabIndex={0}
+              aria-label={`${n.title} — ${n.sub}. Open the call.`}
+              onClick={() => openCall(n.callId)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  openCall(n.callId);
+                }
+              }}
+            >
               <StatusGlyph kind={n.kind} />
               <div className={styles.text}>
                 <div className="t-body-strong">{n.title}</div>

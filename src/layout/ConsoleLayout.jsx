@@ -22,8 +22,8 @@ import styles from './ConsoleLayout.module.css';
 
 export default function ConsoleLayout() {
   const { narrow, mid, wide, xwide } = useViewport();
-  const { pathname } = useLocation();
-  const { setRoute } = useConsole();
+  const { pathname, search } = useLocation();
+  const { setRoute, setDataState } = useConsole();
 
   // Global keyboard (Esc / j / k / Enter) and the toast auto-dismiss timer are
   // each mounted exactly once, here.
@@ -37,6 +37,15 @@ export default function ConsoleLayout() {
   useEffect(() => {
     setRoute(pathname);
   }, [pathname, setRoute]);
+
+  // Dev affordance only. There is no backend to fail, so `?state=loading` and
+  // `?state=error` are how the loading and error states specified for every
+  // screen can actually be seen and reviewed. Anything else means 'ready', so
+  // a plain URL always lands on real data.
+  useEffect(() => {
+    const requested = new URLSearchParams(search).get('state');
+    setDataState(requested === 'loading' || requested === 'error' ? requested : 'ready');
+  }, [search, setDataState]);
 
   const mainClass = [
     styles.main,
