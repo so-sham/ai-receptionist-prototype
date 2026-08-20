@@ -1,0 +1,27 @@
+.header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: var(--s-24);
+}
+
+.count {
+  color: var(--ink-muted);
+}
+
+.chipsRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-8);
+  padding: 14px 2px 0;
+}
+
+.tableWrap {
+  margin-top: 20px;
+}
+
+.hint {
+  padding: 14px 2px;
+  color: var(--ink-muted);
+}

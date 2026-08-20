@@ -1,0 +1,41 @@
+/* Load-bearing: visibility (not display) so the Type cell keeps its grid
+   track at the 900-1239px breakpoint and every following column stays put. */
+.hiddenCell {
+  visibility: hidden;
+  overflow: hidden;
+}
+
+.right {
+  text-align: right;
+}
+
+.caller {
+  font-size: 15px;
+  color: var(--ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.faint {
+  color: var(--ink-faint);
+}
+
+.time {
+  color: var(--ink-muted);
+}
+
+.about {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.value {
+  text-align: right;
+}
+
+.chevron {
+  text-align: right;
+  color: var(--ink-faint);
+}
