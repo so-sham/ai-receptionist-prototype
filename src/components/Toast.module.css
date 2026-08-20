@@ -1,0 +1,24 @@
+.toast {
+  position: fixed;
+  bottom: var(--s-24);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 80;
+  background: var(--ink);
+  color: var(--surface);
+  border-radius: var(--r-6);
+  padding: 12px 18px;
+  font-family: var(--font-sans);
+  font-size: 15px;
+  box-shadow: var(--shadow-float);
+  animation: fade var(--dur-state) var(--ease);
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

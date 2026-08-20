@@ -1,0 +1,43 @@
+.shell {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r-10);
+  overflow: hidden;
+}
+
+.row {
+  display: grid;
+  align-items: center;
+  gap: var(--s-12);
+  padding: 0 var(--s-16);
+  border-bottom: 1px solid var(--line);
+}
+
+.row:last-child {
+  border-bottom: none;
+}
+
+.block {
+  height: 12px;
+  width: 70%;
+  border-radius: var(--r-6);
+  background: linear-gradient(90deg, var(--line) 25%, var(--surface-sunk) 37%, var(--line) 63%);
+  background-size: 400% 100%;
+  animation: shimmer 1.4s ease infinite;
+}
+
+@keyframes shimmer {
+  from {
+    background-position: 100% 50%;
+  }
+  to {
+    background-position: 0 50%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .block {
+    animation: none;
+    background: var(--line);
+  }
+}

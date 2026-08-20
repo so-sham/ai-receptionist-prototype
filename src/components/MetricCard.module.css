@@ -1,0 +1,65 @@
+.card {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r-10);
+  padding: var(--s-24);
+  font-family: var(--font-sans);
+}
+
+.clickable {
+  cursor: pointer;
+  transition: border-color var(--dur-state) var(--ease);
+}
+
+.clickable:hover {
+  border-color: var(--line-strong);
+}
+
+.label {
+  min-height: 32px;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  line-height: 16px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+}
+
+.value {
+  margin: 8px 0 4px;
+  font-size: 30px;
+  line-height: 36px;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+.valueMono {
+  font-family: var(--font-mono);
+  font-weight: 500;
+}
+
+.valueSans {
+  font-family: var(--font-sans);
+  font-weight: 600;
+}
+
+.note {
+  font-size: 13px;
+  line-height: 20px;
+  color: var(--ink-muted);
+}
+
+.noteAttention {
+  color: var(--attention);
+}
+
+.link {
+  margin-top: 6px;
+  font-size: 13px;
+  line-height: 20px;
+  color: var(--accent);
+}

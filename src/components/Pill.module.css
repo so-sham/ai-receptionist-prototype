@@ -1,0 +1,32 @@
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 22px;
+  line-height: 20px;
+  padding: 0 10px;
+  border-radius: var(--r-999);
+  white-space: nowrap;
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+
+.settled {
+  background: var(--settled-wash);
+  color: var(--settled);
+}
+
+.pending {
+  background: var(--pending-wash);
+  color: var(--pending);
+}
+
+.attention {
+  background: var(--attention-wash);
+  color: var(--attention);
+}
+
+.neutral {
+  background: var(--surface-sunk);
+  color: var(--ink-muted);
+}

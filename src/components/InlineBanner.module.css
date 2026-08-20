@@ -1,0 +1,29 @@
+.banner {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-8);
+  border-radius: var(--r-6);
+  border: 1px solid transparent;
+  padding: var(--s-8) var(--s-12);
+  font-family: var(--font-sans);
+  font-size: 13px;
+  line-height: 16px;
+}
+
+.settled {
+  background: var(--settled-wash);
+  border-color: var(--settled);
+  color: var(--settled);
+}
+
+.pending {
+  background: var(--pending-wash);
+  border-color: var(--pending);
+  color: var(--pending);
+}
+
+.attention {
+  background: var(--attention-wash);
+  border-color: var(--attention);
+  color: var(--attention);
+}

@@ -1,0 +1,31 @@
+.glyph {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 16px;
+  height: 16px;
+  border-radius: var(--r-999);
+  font-size: 11px;
+  line-height: 1;
+}
+
+.attention {
+  background: var(--attention-wash);
+  color: var(--attention);
+}
+
+.pending {
+  background: var(--pending-wash);
+  color: var(--pending);
+}
+
+.settled {
+  background: var(--settled-wash);
+  color: var(--settled);
+}
+
+.neutral {
+  background: var(--surface-sunk);
+  color: var(--ink-muted);
+}

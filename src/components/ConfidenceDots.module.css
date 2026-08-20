@@ -1,0 +1,20 @@
+.dots {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.filled,
+.empty {
+  width: 5px;
+  height: 5px;
+  border-radius: var(--r-999);
+}
+
+.filled {
+  background: var(--accent);
+}
+
+.empty {
+  background: var(--line-strong);
+}

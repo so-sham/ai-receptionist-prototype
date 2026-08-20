@@ -1,0 +1,33 @@
+.track {
+  flex: none;
+  width: 34px;
+  height: 19px;
+  padding: 2px;
+  border: none;
+  border-radius: var(--r-999);
+  display: flex;
+  align-items: center;
+  transition: background var(--dur-state) var(--ease);
+}
+
+.on {
+  background: var(--accent);
+  justify-content: flex-end;
+}
+
+.off {
+  background: var(--line-strong);
+  justify-content: flex-start;
+}
+
+.readOnly {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.knob {
+  width: 15px;
+  height: 15px;
+  border-radius: var(--r-999);
+  background: var(--surface);
+}
