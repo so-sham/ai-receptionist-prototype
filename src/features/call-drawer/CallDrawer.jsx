@@ -18,6 +18,7 @@
 import { Button, Drawer, SectionHead } from '../../components';
 import { TOAST_COPY, useConsole } from '../../state';
 import { approvalForCall, callById, drawerPrimaryLabel } from '../../state/selectors.js';
+import { drawerWidth } from '../../layout/useViewport.js';
 
 import AgentPanel from './AgentPanel.jsx';
 import CallHighlights from './CallHighlights.jsx';
@@ -28,14 +29,6 @@ import QualitySetModal from './QualitySetModal.jsx';
 import TranscriptList from './TranscriptList.jsx';
 import TranscriptPlayer from './TranscriptPlayer.jsx';
 import styles from './CallDrawer.module.css';
-
-// README layout table: 560px at the design target, 600px at >=1680,
-// 440px on tablet, a full-screen sheet on mobile.
-function drawerWidth(vw) {
-  if (vw < 900) return '100vw';
-  if (vw < 1240) return '440px';
-  return vw >= 1680 ? '600px' : '560px';
-}
 
 /* ---- 1. Sticky header ------------------------------------------------- */
 

@@ -8,11 +8,15 @@
   display: flex;
   align-items: center;
   gap: 8px;
+  /* Below ~640px the search input + four pills + Export no longer fit on one
+     row. The reference lets the row overflow rather than squish the search
+     box to nothing, so this scrolls horizontally instead of collapsing it. */
+  overflow-x: auto;
 }
 
 .search {
   flex: 1;
-  min-width: 0;
+  min-width: 140px;
   height: 36px;
   border-radius: var(--r-6);
   border: 1px solid var(--line-strong);

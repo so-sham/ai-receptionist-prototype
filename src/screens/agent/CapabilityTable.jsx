@@ -77,7 +77,7 @@ export default function CapabilityTable() {
                   {TOAST_COPY.capabilityUnsupported}
                 </span>
               )}
-              <div className={`t-mono ${styles[TONE_CLASS[c.statusTone]]}`}>{c.status}</div>
+              <div className={`${styles.status} ${styles[TONE_CLASS[c.statusTone]]}`}>{c.status}</div>
             </div>
           );
         })}

@@ -28,6 +28,16 @@ export function viewportFlags(vw) {
   };
 }
 
+// README layout table: 560px at the design target, 600px at >=1680,
+// 440px on tablet, a full-screen sheet on mobile. Shared by every right-side
+// Drawer instance (the call drawer, the compare drawer) so their widths stay
+// in lockstep with the breakpoint table.
+export function drawerWidth(vw) {
+  if (vw < 900) return '100vw';
+  if (vw < 1240) return '440px';
+  return vw >= 1680 ? '600px' : '560px';
+}
+
 export default function useViewport() {
   const [vw, setVw] = useState(read);
 

@@ -16,6 +16,21 @@
   margin-bottom: var(--s-24);
 }
 
+/* README: "Today's metric strip: becomes 2x2 grid at tablet width (900-1239px)".
+   Mobile (<900) stays single-column, matching the layout shell's "single-column
+   everything" rule for that breakpoint. */
+@media (min-width: 900px) and (max-width: 1239px) {
+  .metricStrip {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 899px) {
+  .metricStrip {
+    grid-template-columns: 1fr;
+  }
+}
+
 .needsWrap {
   margin-bottom: var(--s-24);
 }

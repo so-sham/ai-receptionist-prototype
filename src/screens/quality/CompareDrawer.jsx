@@ -14,6 +14,7 @@
 import { Drawer, SectionHead } from '../../components';
 import { COMPARE_ROWS, RUNS } from '../../data';
 import { useConsole, selectors } from '../../state';
+import { drawerWidth } from '../../layout/useViewport.js';
 
 import styles from './CompareDrawer.module.css';
 
@@ -38,6 +39,7 @@ export default function CompareDrawer() {
     <Drawer
       open={state.compareOpen}
       onClose={closeCompare}
+      width={drawerWidth(state.viewportWidth)}
       header={
         <div>
           <div className="t-h2">{selectors.compareTitle(state)}</div>
