@@ -1,0 +1,69 @@
+:root {
+  /* Surfaces */
+  --bg: #F7F7FB;
+  --surface: #FFFFFF;
+  --surface-sunk: #F0EFF7;
+
+  /* Ink */
+  --ink: #1B1830;
+  --ink-muted: #6A6685;
+  --ink-faint: #A6A2BC;
+
+  /* Structure */
+  --line: #E7E5F1;
+  --line-strong: #CFCCE0;
+
+  /* Accent — single */
+  --accent: #5B44D9;
+  --accent-hover: #4A35BC;
+  --accent-wash: #EDEAFC;
+
+  /* Semantic — three only */
+  --settled: #5B44D9;
+  --settled-wash: #EDEAFC;
+  --pending: #9A6B18;
+  --pending-wash: #F8F1E2;
+  --attention: #D8456B;
+  --attention-wash: #FBEAF0;
+
+  /* Practice mark only */
+  --mark-gradient: linear-gradient(135deg, #5B44D9, #E0607F);
+
+  /* Chart series — accent at reducing alpha, never new hues */
+  --series-1: rgba(91, 68, 217, 1);
+  --series-2: rgba(91, 68, 217, .72);
+  --series-3: rgba(91, 68, 217, .6);
+  --series-4: rgba(91, 68, 217, .52);
+  --series-5: rgba(91, 68, 217, .42);
+  --series-6: rgba(91, 68, 217, .34);
+  --series-7: rgba(91, 68, 217, .25);
+  --series-8: rgba(91, 68, 217, .18);
+
+  /* Spacing */
+  --s-4: 4px;
+  --s-8: 8px;
+  --s-12: 12px;
+  --s-16: 16px;
+  --s-24: 24px;
+  --s-32: 32px;
+  --s-40: 40px;
+  --s-48: 48px;
+  --s-56: 56px;
+
+  /* Radii */
+  --r-6: 6px;
+  --r-10: 10px;
+  --r-999: 999px;
+
+  /* Shadow (drawers, modals, toast only) */
+  --shadow-float: 0 1px 2px rgba(27, 24, 48, .04), 0 8px 24px rgba(27, 24, 48, .08);
+
+  /* Motion */
+  --ease: cubic-bezier(.2, 0, .2, 1);
+  --dur-state: 150ms;
+  --dur-overlay: 220ms;
+
+  /* Typography */
+  --font-sans: 'Instrument Sans', system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+}
