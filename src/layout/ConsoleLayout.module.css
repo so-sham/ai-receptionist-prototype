@@ -1,0 +1,43 @@
+.shell {
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 23px;
+}
+
+/* Offsets the fixed sidebar / rail. 0 on mobile, where there is no sidebar. */
+.main {
+  margin-left: 0;
+}
+
+.mainWide {
+  margin-left: 232px;
+}
+
+.mainRail {
+  margin-left: 68px;
+}
+
+/* Content column: centred, capped, with the per-breakpoint gutters and
+   top/bottom padding from the README's layout-shell table. */
+.content {
+  margin: 0 auto;
+  max-width: 100%;
+  padding: 20px var(--s-16) 88px; /* mobile: 88px clears the fixed bottom nav */
+}
+
+.contentMid {
+  max-width: 100%;
+  padding: 28px var(--s-24) var(--s-40);
+}
+
+.contentWide {
+  max-width: 1400px;
+  padding: var(--s-32) var(--s-40) var(--s-56);
+}
+
+.contentXWide {
+  max-width: 1640px;
+}
