@@ -1,0 +1,52 @@
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-8);
+  padding: var(--s-12) 0 var(--s-24);
+}
+
+.flag {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  text-align: left;
+  padding: var(--s-8) var(--s-12);
+  border-radius: var(--r-6);
+  border: 1px solid var(--line);
+  background: var(--bg);
+  font-family: var(--font-sans);
+  font-size: 13px;
+  line-height: 20px;
+  color: var(--ink);
+  transition:
+    border-color var(--dur-state) var(--ease),
+    background var(--dur-state) var(--ease);
+}
+
+.flag:hover {
+  border-color: var(--ink-faint);
+}
+
+/* The flag whose turn is currently lit, so the pair reads as one gesture. */
+.active {
+  border-color: var(--pending);
+  background: var(--pending-wash);
+}
+
+.glyph {
+  color: var(--attention);
+  flex: none;
+}
+
+.label {
+  flex: 1;
+  min-width: 0;
+}
+
+.at {
+  flex: none;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-muted);
+}

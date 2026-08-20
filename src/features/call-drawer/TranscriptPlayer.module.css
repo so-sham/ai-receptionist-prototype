@@ -1,0 +1,39 @@
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--s-12);
+  padding: var(--s-16) 0;
+}
+
+.play {
+  flex: none;
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--r-999);
+  border: none;
+  background: var(--accent);
+  color: var(--surface);
+  font-size: 11px;
+  line-height: 1;
+  transition: background var(--dur-state) var(--ease);
+}
+
+.play:hover {
+  background: var(--accent-hover);
+}
+
+.bar {
+  flex: 1;
+}
+
+.time {
+  flex: none;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 20px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-muted);
+}

@@ -1,0 +1,63 @@
+/* ---- 1. Sticky header ---------------------------------------------- */
+
+.caller {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 17px;
+  line-height: 24px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.meta {
+  margin-top: 2px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 20px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-muted);
+}
+
+/* ---- 2. Outcome banner ---------------------------------------------- */
+
+.banner {
+  margin-bottom: var(--s-24);
+}
+
+/* ---- 3. What happened ------------------------------------------------ */
+
+.summary {
+  margin: 0;
+  padding: var(--s-16) 0 var(--s-24);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 23px;
+  text-wrap: pretty;
+}
+
+/* ---- 9. Sticky footer ------------------------------------------------ */
+
+/* One flex child of the Drawer's footer slot, so the wrapping rule below is
+   ours to set: three 44px buttons do not fit across a 375px sheet. */
+.footerRow {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-12);
+}
+
+.primaryAction {
+  margin-left: auto;
+}
+
+/* The three labels total 518px against 511px of usable footer at the 560px
+   design target — seven pixels short of the one row the design shows. Trimming
+   the two secondaries' side padding buys 24px and keeps all three on one line
+   at 560 and 600, while the wrap above still catches 440 and the mobile sheet.
+   Descendant selector so it outranks the primitive's single-class .lg rule
+   whatever order the bundler emits the two stylesheets in. */
+.footerRow .compact {
+  padding-left: var(--s-12);
+  padding-right: var(--s-12);
+}

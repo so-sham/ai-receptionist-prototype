@@ -1,0 +1,144 @@
+/* On --bg inside a hairline card: a different register from the white chart
+   note above it. */
+.card {
+  margin-top: var(--s-24);
+  border: 1px solid var(--line);
+  border-radius: var(--r-10);
+  background: var(--bg);
+}
+
+.summary {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-12);
+  padding: 14px var(--s-16);
+  background: none;
+  border: none;
+  border-radius: var(--r-10);
+  text-align: left;
+  color: var(--ink);
+}
+
+.summaryText {
+  min-width: 0;
+}
+
+.title {
+  display: block;
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 23px;
+  font-weight: 500;
+}
+
+.line {
+  display: block;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  line-height: 20px;
+  color: var(--ink-muted);
+}
+
+.chevron {
+  flex: none;
+  color: var(--ink-faint);
+  font-size: 12px;
+}
+
+.body {
+  border-top: 1px solid var(--line);
+  padding: 14px var(--s-16) var(--s-16);
+}
+
+.head {
+  margin: 0 0 var(--s-4);
+  font-family: var(--font-sans);
+  font-size: 11px;
+  line-height: 16px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+}
+
+.headSpaced {
+  margin-top: 18px;
+}
+
+.fieldRow {
+  display: grid;
+  grid-template-columns: 1fr 110px 46px;
+  align-items: center;
+  gap: var(--s-12);
+  min-height: 34px;
+  border-bottom: 1px solid var(--line);
+}
+
+.fieldLabel {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  line-height: 20px;
+}
+
+.fieldValue {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 20px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+
+.faint {
+  color: var(--ink-faint);
+}
+
+/* The primitive is inline-flex and sizes to its dots; widen it so the row can
+   right-align them without depending on stylesheet order. */
+.dots {
+  width: 100%;
+  justify-content: flex-end;
+}
+
+.statRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-12);
+  min-height: 34px;
+  border-bottom: 1px solid var(--line);
+}
+
+.statLabel {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  line-height: 20px;
+}
+
+.statValue {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 20px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+
+.offTarget {
+  color: var(--pending);
+}
+
+.footer {
+  margin: 0;
+  padding-top: var(--s-12);
+  font-family: var(--font-sans);
+  font-size: 13px;
+  line-height: 20px;
+  color: var(--ink-muted);
+}
+
+@media (max-width: 480px) {
+  .fieldRow {
+    grid-template-columns: 1fr 84px 46px;
+  }
+}

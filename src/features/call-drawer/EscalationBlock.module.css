@@ -1,0 +1,43 @@
+.block {
+  margin: 0 0 var(--s-24);
+  border: 1px solid var(--line);
+  border-radius: var(--r-6);
+  overflow: hidden;
+}
+
+.head {
+  margin: 0;
+  padding: 10px var(--s-12);
+  background: var(--surface-sunk);
+  font-family: var(--font-sans);
+  font-size: 11px;
+  line-height: 16px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+}
+
+.body {
+  padding: var(--s-12);
+  font-size: 13px;
+  line-height: 20px;
+}
+
+.note {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-muted);
+  margin-bottom: 6px;
+}
+
+.sentence {
+  margin: 0;
+  text-wrap: pretty;
+}
+
+.next {
+  margin: 6px 0 0;
+  color: var(--ink-muted);
+  text-wrap: pretty;
+}

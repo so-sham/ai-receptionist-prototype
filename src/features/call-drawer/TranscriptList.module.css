@@ -1,0 +1,72 @@
+.list {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.turn {
+  display: grid;
+  grid-template-columns: 46px 74px 1fr;
+  gap: 10px;
+  padding: var(--s-8) var(--s-8) var(--s-8) var(--s-4);
+  border-radius: var(--r-6);
+  background: transparent;
+  transition: background var(--dur-state) var(--ease);
+}
+
+/* The turn a flag points at. --pending, because a flagged turn is provisional
+   evidence, not a warning in its own right. */
+.lit {
+  background: var(--pending-wash);
+}
+
+.at {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 20px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-faint);
+}
+
+.speaker {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  line-height: 20px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+}
+
+.text {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 23px;
+  color: var(--ink);
+  text-wrap: pretty;
+  min-width: 0;
+}
+
+.flag {
+  margin-top: var(--s-4);
+  font-size: 13px;
+  line-height: 20px;
+  color: var(--attention);
+}
+
+/* Mobile sheet: 46 + 74px of gutter leaves too little for the words. */
+@media (max-width: 480px) {
+  .turn {
+    grid-template-columns: 46px 1fr;
+  }
+
+  .speaker {
+    grid-column: 2;
+    line-height: 16px;
+  }
+
+  .text {
+    grid-column: 2;
+  }
+}

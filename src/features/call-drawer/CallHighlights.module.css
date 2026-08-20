@@ -1,0 +1,76 @@
+.wrap {
+  padding: var(--s-8) 0 var(--s-24);
+}
+
+.rows {
+  margin: 0;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: var(--s-12);
+  padding: var(--s-8) 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.label {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  line-height: 20px;
+  color: var(--ink-muted);
+}
+
+.valueCell {
+  margin: 0;
+  min-width: 0;
+}
+
+.value {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 20px;
+  color: var(--ink);
+  text-wrap: pretty;
+}
+
+.valueMono {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 20px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+  overflow-wrap: anywhere;
+}
+
+/* Null values are non-essential text, so --ink-faint is allowed here. */
+.empty {
+  color: var(--ink-faint);
+}
+
+.tag {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  line-height: 16px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.footer {
+  margin: 0;
+  padding-top: 10px;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  line-height: 20px;
+  color: var(--ink-muted);
+  text-wrap: pretty;
+}
+
+/* Mobile sheet: the 140px label column crowds the value at 375px. */
+@media (max-width: 480px) {
+  .row {
+    grid-template-columns: 1fr;
+    gap: 2px;
+  }
+}
