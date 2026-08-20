@@ -47,8 +47,8 @@
 
 .mark {
   flex: none;
-  width: 26px;
-  height: 26px;
+  width: 40px;
+  height: 40px;
   background-image: url('../assets/logo-mark.png');
   background-repeat: no-repeat;
   background-position: center;
