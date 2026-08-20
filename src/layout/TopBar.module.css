@@ -26,14 +26,10 @@
   flex: none;
   width: 26px;
   height: 26px;
-  border-radius: var(--r-6);
-  background: var(--mark-gradient);
-  color: #fff;
-  font-family: var(--font-mono);
-  font-size: 11px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  background-image: url('../assets/logo-mark.png');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
 }
 
 .name {

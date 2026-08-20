@@ -27,9 +27,7 @@ export default function Sidebar({ collapsed = false }) {
       aria-label="Main"
     >
       <button type="button" className={styles.practice} title={PRACTICE.name}>
-        <span className={styles.mark} aria-hidden="true">
-          {PRACTICE.initials}
-        </span>
+        <span className={styles.mark} aria-hidden="true" />
         {showLabels ? (
           <>
             <span className={styles.practiceName}>{PRACTICE.name}</span>

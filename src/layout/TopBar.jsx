@@ -8,9 +8,7 @@ export default function TopBar() {
   return (
     <header className={styles.topbar}>
       <div className={styles.practice}>
-        <span className={styles.mark} aria-hidden="true">
-          {PRACTICE.initials}
-        </span>
+        <span className={styles.mark} aria-hidden="true" />
         <span className={styles.name}>{PRACTICE.name}</span>
       </div>
       <button type="button" className={styles.avatar} title={SIGNED_IN_USER.name}>
